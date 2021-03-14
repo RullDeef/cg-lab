@@ -4,6 +4,9 @@
 #include <QtCharts>
 #include "ui_statisticspage.h"
 
+#include <list>
+#include "../core/segmentrenderer.hpp"
+
 namespace ui
 {
     class StatisticsPage : public QWidget
@@ -13,13 +16,19 @@ namespace ui
     public:
         StatisticsPage(QWidget *parent = Q_NULLPTR);
 
-        void initBars(const QStringList& strings);
-        void setBarValue(int index, qreal value);
+        void initAlgos(const std::list<core::SegmentRenderer*>& algos);
+
+    public slots:
+        void updateBarValues();
 
     private:
         void initChart();
+        void setBarValue(int index, qreal value);
+        void updateRange();
 
         Ui::StatisticsPage ui;
+
+        std::list<core::SegmentRenderer*> segmentRenderers;
 
         QtCharts::QChartView chartView;
         QtCharts::QChart chart;

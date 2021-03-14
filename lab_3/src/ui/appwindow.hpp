@@ -1,10 +1,13 @@
 #pragma once
 
 #include <QMainWindow>
+#include <list>
 #include "ui_appwindow.h"
 #include "segmentpage.hpp"
 #include "spectrumpage.hpp"
 #include "statisticspage.hpp"
+
+#include "../core/segmentrenderer.hpp"
 
 namespace ui
 {
@@ -21,11 +24,10 @@ namespace ui
         void selectSpectrumPage();
         void selectStatisticsPage();
 
-        void updateTiming_BresenhemReal(qreal time);
-        void updateTiming_Library(qreal time);
-
     private:
         Ui::AppWindow ui;
+
+        std::list<core::SegmentRenderer*> segmentRenderers;
 
         SegmentPage* segmentPage;
         SpectrumPage* spectrumPage;

@@ -16,8 +16,8 @@ ui::SegmentPage::SegmentPage(QWidget *parent)
     canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
     ui.canvas->setScene(&canvasScene);
 
-    segmentRenderer = new SegmentRenderer();
-    canvasScene.addItem(segmentRenderer);
+    segRenItem = new SegRenItem();
+    canvasScene.addItem(segRenItem);
     
     connect(ui.x1Input, SIGNAL(valueChanged(int)), this, SLOT(setX1(int)));
     connect(ui.y1Input, SIGNAL(valueChanged(int)), this, SLOT(setY1(int)));
@@ -32,7 +32,18 @@ ui::SegmentPage::SegmentPage(QWidget *parent)
 
 ui::SegmentPage::~SegmentPage()
 {
-    delete segmentRenderer;
+    delete segRenItem;
+}
+
+void ui::SegmentPage::initAlogs(const std::list<core::SegmentRenderer*>& algos)
+{
+    segmentRenderers.clear();
+    std::copy(algos.begin(), algos.end(), std::back_inserter(segmentRenderers));
+
+    // setup algorithm dropdown list
+    ui.algorithmInput->clear();
+    for (auto& renderer : segmentRenderers)
+        ui.algorithmInput->addItem(renderer->getName());
 }
 
 void ui::SegmentPage::mousePressEvent(QMouseEvent* event)
@@ -56,9 +67,9 @@ void ui::SegmentPage::selectColor()
 void ui::SegmentPage::drawSegment()
 {
     canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
-    segmentRenderer->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
 
-    segmentRenderer->addSegment(x1, y1, x2, y2, color, algorithm);
+    segRenItem->addSegment(x1, y1, x2, y2, color, segmentRenderers[algorithmIndex]);
 
     canvasScene.update();
     ui.canvas->repaint();
@@ -66,7 +77,7 @@ void ui::SegmentPage::drawSegment()
 
 void ui::SegmentPage::clearCanvas()
 {
-    segmentRenderer->clearSegments();
+    segRenItem->clearSegments();
 
     canvasScene.update();
     ui.canvas->repaint();

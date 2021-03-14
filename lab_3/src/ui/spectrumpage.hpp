@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QWidget>
-#include "segmentrenderer.hpp"
+#include <vector>
 #include "ui_spectrumpage.h"
+#include "segrenitem.hpp"
+#include "../core/segmentrenderer.hpp"
 
 namespace ui
 {
@@ -13,6 +15,8 @@ namespace ui
     public:
         SpectrumPage(QWidget *parent = Q_NULLPTR);
         ~SpectrumPage();
+
+        void initAlgos(const std::list<core::SegmentRenderer*>& algos);
 
         void mousePressEvent(QMouseEvent* event) override;
 
@@ -34,17 +38,17 @@ namespace ui
             ui.stepInput->blockSignals(false);
         }
 
-        inline void setAlgorithm1(int value) { algorithm1 = (SegmentRenderer::Algorithm)value; }
-        inline void setAlgorithm2(int value) { algorithm2 = (SegmentRenderer::Algorithm)value; }
+        inline void setAlgorithm1(int value) { algorithm1Index = value; }
+        inline void setAlgorithm2(int value) { algorithm2Index = value; }
 
         void selectColor();
         void clearCanvas();
 
-        inline void drawSpectrum1() { drawSpectrum(algorithm1, colorFg); }
-        inline void drawSpectrum2() { drawSpectrum(algorithm2, colorBg); }
+        inline void drawSpectrum1() { drawSpectrum(segmentRenderers[algorithm1Index], colorFg); }
+        inline void drawSpectrum2() { drawSpectrum(segmentRenderers[algorithm2Index], colorBg); }
 
     protected:
-        void drawSpectrum(SegmentRenderer::Algorithm algorithm, QColor color);
+        void drawSpectrum(core::SegmentRenderer* renderer, QColor color);
 
     private:
         Ui::SpectrumPage ui;
@@ -55,11 +59,12 @@ namespace ui
         QColor colorFg = QColor(100, 255, 100);
         QColor colorBg = Qt::white;
         QGraphicsScene colorScene;
-
-        SegmentRenderer::Algorithm algorithm1 = SegmentRenderer::Algorithm::DDA;
-        SegmentRenderer::Algorithm algorithm2 = SegmentRenderer::Algorithm::DDA;
+        
+        std::vector<core::SegmentRenderer*> segmentRenderers;
+        int algorithm1Index = 0;
+        int algorithm2Index = 0;
 
         QGraphicsScene canvasScene;
-        SegmentRenderer* segmentRenderer;
+        SegRenItem* segRenItem;
     };
 }

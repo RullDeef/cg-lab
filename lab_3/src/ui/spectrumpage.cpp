@@ -3,6 +3,8 @@
 #include <QMouseEvent>
 #include <QColorDialog>
 
+using namespace core;
+
 ui::SpectrumPage::SpectrumPage(QWidget *parent)
     : QWidget(parent)
 {
@@ -14,8 +16,8 @@ ui::SpectrumPage::SpectrumPage(QWidget *parent)
     canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
     ui.canvas->setScene(&canvasScene);
 
-    segmentRenderer = new SegmentRenderer();
-    canvasScene.addItem(segmentRenderer);
+    segRenItem = new SegRenItem();
+    canvasScene.addItem(segRenItem);
 
     connect(ui.lengthInput, SIGNAL(valueChanged(int)), this, SLOT(setLength(int)));
     connect(ui.amountInput, SIGNAL(valueChanged(int)), this, SLOT(setAmount(int)));
@@ -31,7 +33,22 @@ ui::SpectrumPage::SpectrumPage(QWidget *parent)
 
 ui::SpectrumPage::~SpectrumPage()
 {
-    delete segmentRenderer;
+    delete segRenItem;
+}
+
+void ui::SpectrumPage::initAlgos(const std::list<core::SegmentRenderer*>& algos)
+{
+    segmentRenderers.clear();
+    std::copy(algos.begin(), algos.end(), std::back_inserter(segmentRenderers));
+
+    // setup algorithm dropdown list
+    ui.algorithm1Input->clear();
+    ui.algorithm2Input->clear();
+    for (auto& renderer : segmentRenderers)
+    {
+        ui.algorithm1Input->addItem(renderer->getName());
+        ui.algorithm2Input->addItem(renderer->getName());
+    }
 }
 
 void ui::SpectrumPage::mousePressEvent(QMouseEvent* event)
@@ -55,21 +72,21 @@ void ui::SpectrumPage::selectColor()
 void ui::SpectrumPage::clearCanvas()
 {
     canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
-    segmentRenderer->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
 
-    segmentRenderer->clearSegments();
+    segRenItem->clearSegments();
 
     canvasScene.update();
     ui.canvas->repaint();
 }
 
-void ui::SpectrumPage::drawSpectrum(SegmentRenderer::Algorithm algorithm, QColor color)
+void ui::SpectrumPage::drawSpectrum(SegmentRenderer* renderer, QColor color)
 {
     canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
-    segmentRenderer->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
 
-    double x1 = segmentRenderer->boundingRect().center().x();
-    double y1 = segmentRenderer->boundingRect().center().y();
+    double x1 = segRenItem->boundingRect().center().x();
+    double y1 = segRenItem->boundingRect().center().y();
 
     for (int angleDeg = 0; angleDeg + 0.5 * angleStep < 360; angleDeg += angleStep)
     {
@@ -78,7 +95,7 @@ void ui::SpectrumPage::drawSpectrum(SegmentRenderer::Algorithm algorithm, QColor
         double x2 = x1 + segmentsLength * cos(angle);
         double y2 = y1 + segmentsLength * sin(angle);
 
-        segmentRenderer->addSegment(x1, y1, x2, y2, color, algorithm);
+        segRenItem->addSegment(x1, y1, x2, y2, color, renderer);
     }
 
     canvasScene.update();

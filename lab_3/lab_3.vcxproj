@@ -101,14 +101,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\bresrealsegren.cpp" />
+    <ClCompile Include="src\core\librarysegren.cpp" />
+    <ClCompile Include="src\core\segmentrenderer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ui\appwindow.cpp" />
     <ClCompile Include="src\ui\segmentpage.cpp" />
-    <ClCompile Include="src\ui\segmentrenderer.cpp" />
+    <ClCompile Include="src\ui\segrenitem.cpp" />
     <ClCompile Include="src\ui\spectrumpage.cpp" />
     <ClCompile Include="src\ui\statisticspage.cpp" />
-    <ClCompile Include="src\ui\timedsegmentrenderer.cpp" />
-    <ClCompile Include="src\ui\timedsegmentrenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\ui\appwindow.hpp" />
@@ -123,9 +124,14 @@
     <QtMoc Include="src\ui\segmentpage.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ui\segmentrenderer.hpp" />
     <QtMoc Include="src\ui\statisticspage.hpp" />
     <QtMoc Include="src\ui\spectrumpage.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\bresrealsegren.hpp" />
+    <ClInclude Include="src\core\librarysegren.hpp" />
+    <ClInclude Include="src\core\segmentrenderer.hpp" />
+    <ClInclude Include="src\ui\segrenitem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

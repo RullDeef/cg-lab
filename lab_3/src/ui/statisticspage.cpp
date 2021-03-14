@@ -11,33 +11,47 @@ ui::StatisticsPage::StatisticsPage(QWidget *parent)
     ui.setupUi(this);
     initChart();
 
-    // initBars({u8"ЦДА", u8"Брезенхэм действ.", u8"Библиотечный"});
-    // setBarValue(0, 14.3);
-    // setBarValue(1, 11.7);
-    // setBarValue(2, 21.2);
+    connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(updateBarValues()));
 }
 
-void ui::StatisticsPage::initBars(const QStringList& strings)
+void ui::StatisticsPage::initAlgos(const std::list<core::SegmentRenderer*>& algos)
 {
+    segmentRenderers = algos;
+
     barSet.remove(0, catAxis.count());
     catAxis.clear();
 
+    QStringList strings;
+    std::transform(algos.begin(), algos.end(), std::back_inserter(strings),
+        [](const core::SegmentRenderer* renderer) -> QString { return renderer->getName(); });
     catAxis.append(strings);
-    for (const auto& str : strings)
+
+    for (const auto& algo : algos)
         barSet.append(0);
 
-    valAxis.setRange(0, 10.0);
+    valAxis.setRange(0, 2.0);
+}
+
+void ui::StatisticsPage::updateBarValues()
+{
+    int i = 0;
+    for (const auto& renderer : segmentRenderers)
+        barSet.replace(i++, renderer->getMeanDrawTime().count());
+    updateRange();
 }
 
 void ui::StatisticsPage::setBarValue(int index, qreal value)
 {
     barSet.replace(index, value);
+    updateRange();
+}
 
-    // update range
+void ui::StatisticsPage::updateRange()
+{
     qreal maxTime = 0.0;
     for (int i = 0; i < catAxis.count(); i++)
         maxTime = std::max(maxTime, barSet[i]);
-    valAxis.setRange(0, maxTime + 10.0);
+    valAxis.setRange(0, maxTime + 2.0);
 }
 
 void ui::StatisticsPage::initChart()
@@ -61,3 +75,4 @@ void ui::StatisticsPage::initChart()
     ui.horizontalLayout->insertWidget(0, &chartView);
     
 }
+

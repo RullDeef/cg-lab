@@ -3,8 +3,10 @@
 #include <QWidget>
 #include <QImage>
 #include <QGraphicsPixmapItem>
-#include "segmentrenderer.hpp"
+#include <vector>
 #include "ui_segmentpage.h"
+#include "segrenitem.hpp"
+#include "../core/segmentrenderer.hpp"
 
 namespace ui
 {
@@ -16,6 +18,8 @@ namespace ui
         SegmentPage(QWidget *parent = Q_NULLPTR);
         ~SegmentPage();
 
+        void initAlogs(const std::list<core::SegmentRenderer*>& algos);
+
         void mousePressEvent(QMouseEvent* event) override;
 
     public slots:
@@ -24,7 +28,7 @@ namespace ui
         inline void setX2(int value) { x2 = value; }
         inline void setY2(int value) { y2 = value; }
 
-        inline void setAlgorithm(int value) { algorithm = (SegmentRenderer::Algorithm)value; }
+        inline void setAlgorithm(int value) { algorithmIndex = value; }
 
         void selectColor();
         void drawSegment();
@@ -42,9 +46,10 @@ namespace ui
         QColor color = QColor(100, 255, 100);
         QGraphicsScene colorScene;
 
-        SegmentRenderer::Algorithm algorithm = SegmentRenderer::Algorithm::DDA;
+        std::vector<core::SegmentRenderer*> segmentRenderers;
+        int algorithmIndex = 0;
 
         QGraphicsScene canvasScene;
-        SegmentRenderer* segmentRenderer;
+        SegRenItem* segRenItem;
     };
 }
