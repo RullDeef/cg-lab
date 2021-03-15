@@ -26,10 +26,10 @@ namespace core
     class SegmentRenderer // interface
     {
     public:
-        using durr_t = std::chrono::microseconds;
+        using durr_t = std::chrono::nanoseconds;
         using time_point_t = std::chrono::high_resolution_clock::time_point;
 
-        const static size_t defaultQueueSize = 10;
+        const static size_t defaultQueueSize = 100;
 
         SegmentRenderer(const char* name, size_t queueSize = defaultQueueSize) : name(name),
             queueSize(queueSize), startTime(std::chrono::high_resolution_clock::now()) {}
@@ -37,20 +37,20 @@ namespace core
         const char* getName() const { return name; }
         void drawSegment(QImage& image, Segment segment);
         
-        inline durr_t getLastDrawTime() const
+        inline double getLastDrawTime() const
         {
-            return drawTimes.size() == 0 ? durr_t(0) : drawTimes.front();
+            return drawTimes.size() == 0 ? 0.0 : drawTimes.front();
         }
         
-        inline durr_t getMeanDrawTime() const
+        inline double getMeanDrawTime() const
         {
-            return drawTimes.size() == 0 ? durr_t(0) : std::accumulate(drawTimes.begin(),
-                drawTimes.end(), durr_t(0), std::plus()) / drawTimes.size();
+            return drawTimes.size() == 0 ? 0.0 : std::accumulate(drawTimes.begin(),
+                drawTimes.end(), 0.0, std::plus()) / drawTimes.size();
         }
 
     protected:
         void startTiming();
-        void stopTiming();
+        void stopTiming(double dx, double dy);
 
         virtual void drawClampedSegment(QImage& image, Segment& segment) = 0;
 
@@ -59,6 +59,6 @@ namespace core
         time_point_t startTime;
 
         size_t queueSize;
-        std::list<durr_t> drawTimes;
+        std::list<double> drawTimes;
     };
 }

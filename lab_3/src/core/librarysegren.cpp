@@ -9,7 +9,8 @@ void core::LibSegRen::drawClampedSegment(QImage& image, Segment& segment)
 
     startTiming();
     painter.drawLine(segment.x1, segment.y1, segment.x2, segment.y2);
-    stopTiming();
+    stopTiming(std::abs(segment.x2 - segment.x1) + 1,
+        std::abs(segment.y2 - segment.y1) + 1);
 
     painter.endNativePainting();
 }

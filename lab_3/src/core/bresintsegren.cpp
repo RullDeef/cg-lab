@@ -1,6 +1,6 @@
-#include "bresrealsegren.hpp"
+#include "bresintsegren.hpp"
 
-void core::BresRealSegRen::drawClampedSegment(QImage& image, Segment& segment)
+void core::BresIntSegRen::drawClampedSegment(QImage& image, Segment& segment)
 {
     QRgb color = segment.color.rgba();
     startTiming();
@@ -19,12 +19,12 @@ void core::BresRealSegRen::drawClampedSegment(QImage& image, Segment& segment)
 
     int yDir = segment.y1 < segment.y2 ? 1 : -1;
 
-    double error = 0.0;
-    double deltaError;
+    int error = 0;
+    int deltaError;
 
     if (deltaX < deltaY)
     {
-        deltaError = static_cast<double>(deltaX) / deltaY;
+        deltaError = deltaX;
 
         while (yDir > 0 && y < segment.y2 + yDir
             || yDir < 0 && y > segment.y2 + yDir)
@@ -32,9 +32,9 @@ void core::BresRealSegRen::drawClampedSegment(QImage& image, Segment& segment)
             image.setPixel(x, y, color);
 
             error += deltaError;
-            if (error >= 1.0)
+            if (error >= deltaY)
             {
-                error -= 1.0;
+                error -= deltaY;
                 x++;
             }
 
@@ -43,16 +43,16 @@ void core::BresRealSegRen::drawClampedSegment(QImage& image, Segment& segment)
     }
     else
     {
-        deltaError = static_cast<double>(deltaY) / deltaX;
+        deltaError = deltaY;
 
         while (x < segment.x2 + 1)
         {
             image.setPixel(x, y, color);
 
             error += deltaError;
-            if (error >= 1.0)
+            if (error >= deltaX)
             {
-                error -= 1.0;
+                error -= deltaX;
                 y += yDir;
             }
 

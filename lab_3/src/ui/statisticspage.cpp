@@ -10,8 +10,6 @@ ui::StatisticsPage::StatisticsPage(QWidget *parent)
 {
     ui.setupUi(this);
     initChart();
-
-    connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(updateBarValues()));
 }
 
 void ui::StatisticsPage::initAlgos(const std::list<core::SegmentRenderer*>& algos)
@@ -29,14 +27,14 @@ void ui::StatisticsPage::initAlgos(const std::list<core::SegmentRenderer*>& algo
     for (const auto& algo : algos)
         barSet.append(0);
 
-    valAxis.setRange(0, 2.0);
+    updateRange();
 }
 
 void ui::StatisticsPage::updateBarValues()
 {
     int i = 0;
     for (const auto& renderer : segmentRenderers)
-        barSet.replace(i++, renderer->getMeanDrawTime().count());
+        barSet.replace(i++, renderer->getMeanDrawTime());
     updateRange();
 }
 
@@ -48,21 +46,26 @@ void ui::StatisticsPage::setBarValue(int index, qreal value)
 
 void ui::StatisticsPage::updateRange()
 {
-    qreal maxTime = 0.0;
+    qreal maxTime = 0.01;
     for (int i = 0; i < catAxis.count(); i++)
         maxTime = std::max(maxTime, barSet[i]);
-    valAxis.setRange(0, maxTime + 2.0);
+    valAxis.setRange(0, maxTime / 0.85);
 }
 
 void ui::StatisticsPage::initChart()
 {
     series.append(&barSet);
 
+    QFont font = chart.font();
+    font.setPointSize(14);
+    chart.setTitleFont(font);
     chart.setTitle(u8"Сравнение быстродействия");
     chart.addSeries(&series);
 
     // categories
     chart.addAxis(&catAxis, Qt::AlignBottom);
+    font.setPointSize(12);
+    catAxis.setLabelsFont(font);
     series.attachAxis(&catAxis);
 
     // value ranges
@@ -73,6 +76,5 @@ void ui::StatisticsPage::initChart()
     chartView.setRenderHint(QPainter::Antialiasing);
 
     ui.horizontalLayout->insertWidget(0, &chartView);
-    
 }
 

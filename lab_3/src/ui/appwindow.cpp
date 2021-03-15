@@ -1,7 +1,10 @@
 #include "appwindow.hpp"
 
 #include "../core/bresrealsegren.hpp"
+#include "../core/bresintsegren.hpp"
+#include "../core/bressmoothsegren.hpp"
 #include "../core/librarysegren.hpp"
+#include "../core/wusegren.hpp"
 
 using namespace core;
 
@@ -10,7 +13,10 @@ ui::AppWindow::AppWindow(QWidget *parent)
 {
     // init renderers
     segmentRenderers.push_back(new BresRealSegRen());
+    segmentRenderers.push_back(new BresIntSegRen());
+    segmentRenderers.push_back(new BresSmoothSegRen());
     segmentRenderers.push_back(new LibSegRen());
+    segmentRenderers.push_back(new WuSegRen());
 
     ui.setupUi(this);
 
@@ -26,9 +32,13 @@ ui::AppWindow::AppWindow(QWidget *parent)
     statisticsPage->initAlgos(segmentRenderers);
     ui.stackedWidget->addWidget(statisticsPage);
 
+    stairsPage = new StairsPage(this);
+    ui.stackedWidget->addWidget(stairsPage);
+
     connect(ui.segmentButton, SIGNAL(clicked()), this, SLOT(selectSegmentPage()));
     connect(ui.spectrumButton, SIGNAL(clicked()), this, SLOT(selectSpectrumPage()));
     connect(ui.statisticsButton, SIGNAL(clicked()), this, SLOT(selectStatisticsPage()));
+    connect(ui.stairsButton, SIGNAL(clicked()), this, SLOT(selectStairsPage()));
 }
 
 ui::AppWindow::~AppWindow()
@@ -36,6 +46,7 @@ ui::AppWindow::~AppWindow()
     delete segmentPage;
     delete spectrumPage;
     delete statisticsPage;
+    delete stairsPage;
 
     for (const auto& renderer : segmentRenderers)
         delete renderer;
@@ -55,4 +66,9 @@ void ui::AppWindow::selectStatisticsPage()
 {
     statisticsPage->updateBarValues();
     ui.stackedWidget->setCurrentWidget(statisticsPage);
+}
+
+void ui::AppWindow::selectStairsPage()
+{
+    ui.stackedWidget->setCurrentWidget(stairsPage);
 }

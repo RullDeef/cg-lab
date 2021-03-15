@@ -6,6 +6,7 @@
 #include "segmentpage.hpp"
 #include "spectrumpage.hpp"
 #include "statisticspage.hpp"
+#include "stairspage.hpp"
 
 #include "../core/segmentrenderer.hpp"
 
@@ -23,6 +24,7 @@ namespace ui
         void selectSegmentPage();
         void selectSpectrumPage();
         void selectStatisticsPage();
+        void selectStairsPage();
 
     private:
         Ui::AppWindow ui;
@@ -32,5 +34,6 @@ namespace ui
         SegmentPage* segmentPage;
         SpectrumPage* spectrumPage;
         StatisticsPage* statisticsPage;
+        StairsPage* stairsPage;
     };
 }

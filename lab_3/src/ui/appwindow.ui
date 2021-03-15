@@ -96,6 +96,21 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="stairsButton">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>анализ ступенчатости</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -200,6 +215,7 @@
             <property name="font">
              <font>
               <pointsize>14</pointsize>
+              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
