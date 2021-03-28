@@ -2,6 +2,9 @@
 
 #include <QWidget>
 #include <QtCharts>
+#include <vector>
+#include <list>
+#include "../core/segmentrenderer.hpp"
 #include "ui_stairspage.h"
 
 namespace ui
@@ -14,7 +17,10 @@ namespace ui
         StairsPage(QWidget *parent = Q_NULLPTR);
         ~StairsPage();
 
+        void InitAlgos(const std::list<core::SegmentRenderer*>& algos);
+
     private:
+        int calcStairsCount(double segLength, int angleDeg);
         void initChart();
 
         Ui::StairsPage ui;
@@ -25,6 +31,7 @@ namespace ui
         QtCharts::QValueAxis lenAxis;
         QtCharts::QValueAxis angleAxis;
 
-        QtCharts::QLineSeries lineSeries;
+        std::vector<QtCharts::QLineSeries*> lineSeries;
+        std::vector<core::SegmentRenderer*> segmentRenderers;
     };
 }

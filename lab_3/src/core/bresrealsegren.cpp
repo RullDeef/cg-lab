@@ -24,7 +24,7 @@ void core::BresRealSegRen::drawClampedSegment(QImage& image, Segment& segment)
 
     if (deltaX < deltaY)
     {
-        deltaError = static_cast<double>(deltaX) / deltaY;
+        deltaError = (double)deltaX / deltaY;
 
         while (yDir > 0 && y < segment.y2 + yDir
             || yDir < 0 && y > segment.y2 + yDir)
@@ -43,7 +43,7 @@ void core::BresRealSegRen::drawClampedSegment(QImage& image, Segment& segment)
     }
     else
     {
-        deltaError = static_cast<double>(deltaY) / deltaX;
+        deltaError = (double)deltaY / deltaX;
 
         while (x < segment.x2 + 1)
         {

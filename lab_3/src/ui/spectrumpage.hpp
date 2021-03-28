@@ -22,21 +22,7 @@ namespace ui
 
     public slots:
         inline void setLength(int value) { segmentsLength = value; }
-        inline void setAngleStep(int value)
-        {
-            angleStep = value;
-            ui.amountInput->blockSignals(true);
-            ui.amountInput->setValue(360.0 / value);
-            ui.amountInput->blockSignals(false);
-        }
-        
-        inline void setAmount(int value)
-        {
-            angleStep = 360.0 / value;
-            ui.stepInput->blockSignals(true);
-            ui.stepInput->setValue(angleStep);
-            ui.stepInput->blockSignals(false);
-        }
+        inline void setAmount(int value) { segmentsAmount = value; }
 
         inline void setAlgorithm1(int value) { algorithm1Index = value; }
         inline void setAlgorithm2(int value) { algorithm2Index = value; }
@@ -54,7 +40,7 @@ namespace ui
         Ui::SpectrumPage ui;
 
         int segmentsLength = 1;
-        int angleStep = 1;
+        int segmentsAmount = 1;
 
         QColor colorFg = QColor(100, 255, 100);
         QColor colorBg = Qt::white;

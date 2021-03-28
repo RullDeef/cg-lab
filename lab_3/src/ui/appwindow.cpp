@@ -1,5 +1,6 @@
 #include "appwindow.hpp"
 
+#include "../core/ddasegren.hpp"
 #include "../core/bresrealsegren.hpp"
 #include "../core/bresintsegren.hpp"
 #include "../core/bressmoothsegren.hpp"
@@ -12,6 +13,7 @@ ui::AppWindow::AppWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     // init renderers
+    segmentRenderers.push_back(new DDASegRen());
     segmentRenderers.push_back(new BresRealSegRen());
     segmentRenderers.push_back(new BresIntSegRen());
     segmentRenderers.push_back(new BresSmoothSegRen());
@@ -33,6 +35,7 @@ ui::AppWindow::AppWindow(QWidget *parent)
     ui.stackedWidget->addWidget(statisticsPage);
 
     stairsPage = new StairsPage(this);
+    stairsPage->InitAlgos(segmentRenderers);
     ui.stackedWidget->addWidget(stairsPage);
 
     connect(ui.segmentButton, SIGNAL(clicked()), this, SLOT(selectSegmentPage()));

@@ -21,7 +21,6 @@ ui::SpectrumPage::SpectrumPage(QWidget *parent)
 
     connect(ui.lengthInput, SIGNAL(valueChanged(int)), this, SLOT(setLength(int)));
     connect(ui.amountInput, SIGNAL(valueChanged(int)), this, SLOT(setAmount(int)));
-    connect(ui.stepInput, SIGNAL(valueChanged(int)), this, SLOT(setAngleStep(int)));
 
     connect(ui.algorithm1Input, SIGNAL(currentIndexChanged(int)), this, SLOT(setAlgorithm1(int)));
     connect(ui.algorithm2Input, SIGNAL(currentIndexChanged(int)), this, SLOT(setAlgorithm2(int)));
@@ -88,10 +87,12 @@ void ui::SpectrumPage::drawSpectrum(SegmentRenderer* renderer, QColor color)
     double x1 = segRenItem->boundingRect().center().x();
     double y1 = segRenItem->boundingRect().center().y();
 
-    for (int angleDeg = 0; angleDeg + 0.5 * angleStep < 360; angleDeg += angleStep)
-    {
-        double angle = angleDeg * 3.1415926535 / 180.0;
+    constexpr auto pi = 3.14159265358979323846;
+    constexpr auto tau = 2 * pi;
 
+    double angleStep = tau / segmentsAmount;
+    for (double angle = 0.0; angle < tau; angle += angleStep)
+    {
         double x2 = x1 + segmentsLength * cos(angle);
         double y2 = y1 + segmentsLength * sin(angle);
 
