@@ -100,9 +100,13 @@
     <QtRcc Include="src\ui\mainwindow.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\circlerenderer.cpp" />
     <ClCompile Include="src\core\ellipserenderer.cpp" />
+    <ClCompile Include="src\core\libcirren.cpp" />
     <ClCompile Include="src\core\libellren.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ui\circlepage.cpp" />
+    <ClCompile Include="src\ui\cirrenitem.cpp" />
     <ClCompile Include="src\ui\ellipsepage.cpp" />
     <ClCompile Include="src\ui\ellrenitem.cpp" />
     <ClCompile Include="src\ui\mainwindow.cpp" />
@@ -111,6 +115,7 @@
     <QtMoc Include="src\ui\ellipsepage.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtUic Include="src\ui\circlepage.ui" />
     <QtUic Include="src\ui\ellipsepage.ui" />
     <QtUic Include="src\ui\mainwindow.ui" />
   </ItemGroup>
@@ -118,8 +123,12 @@
     <QtMoc Include="src\ui\mainwindow.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\circlerenderer.hpp" />
     <ClInclude Include="src\core\ellipserenderer.hpp" />
+    <ClInclude Include="src\core\libcirren.hpp" />
     <ClInclude Include="src\core\libellren.hpp" />
+    <QtMoc Include="src\ui\circlepage.hpp" />
+    <ClInclude Include="src\ui\cirrenitem.hpp" />
     <ClInclude Include="src\ui\ellrenitem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,7 +8,6 @@
 #include <QGraphicsScene>
 
 #include "ellrenitem.hpp"
-#include "../core/ellipserenderer.hpp"
 
 class EllipsePage : public QWidget
 {

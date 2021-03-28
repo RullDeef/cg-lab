@@ -46,6 +46,18 @@
     <ClCompile Include="src\ui\ellrenitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\circlerenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\libcirren.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\circlepage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\cirrenitem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\ui\ellipsepage.hpp">
@@ -54,12 +66,18 @@
     <QtMoc Include="src\ui\mainwindow.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="src\ui\circlepage.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="src\ui\ellipsepage.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="src\ui\mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\circlepage.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -71,6 +89,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\libellren.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\circlerenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\libcirren.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\cirrenitem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

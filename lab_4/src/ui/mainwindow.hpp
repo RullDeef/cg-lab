@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 #include "ellipsepage.hpp"
-#include "../core/libellren.hpp"
+#include "circlepage.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -17,10 +17,13 @@ public:
 
 public slots:
     void selectEllipsePage();
+    void selectCirclePage();
 
 private:
     Ui::MainWindowClass ui;
     std::unique_ptr<EllipsePage> ellipsePage;
+    std::unique_ptr<CirclePage> circlePage;
 
-    std::vector<std::shared_ptr<EllipseRenderer>> algorithms;
+    std::vector<std::shared_ptr<EllipseRenderer>> ellipseAlgorithms;
+    std::vector<std::shared_ptr<CircleRenderer>> circleAlgorithms;
 };
