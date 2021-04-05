@@ -18,6 +18,8 @@ namespace ui
 
         void initAlgos(const std::list<core::SegmentRenderer*>& algos);
 
+        void useAlgosOnce();
+
     public slots:
         void updateBarValues();
 

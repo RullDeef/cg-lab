@@ -38,10 +38,13 @@ void core::SegmentRenderer::startTiming()
 
 void core::SegmentRenderer::stopTiming(double dx, double dy)
 {
+    if (!timing_active)
+        return;
+
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<durr_t>(endTime - startTime);
 
-    drawTimes.push_front(elapsed.count() / std::max(dx, dy) / 1000.0);
+    drawTimes.push_front(elapsed.count() / 1000.0);
     if (drawTimes.size() > queueSize)
         drawTimes.pop_back();
 }

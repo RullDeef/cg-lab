@@ -6,7 +6,7 @@ using namespace QtCharts;
 
 ui::StatisticsPage::StatisticsPage(QWidget *parent)
     : QWidget(parent),
-    barSet(u8"Время выполнения алгоритма, мкс")
+    barSet(u8"Время выполнения алгоритма (мкс/пикс.)")
 {
     ui.setupUi(this);
     initChart();
@@ -28,6 +28,34 @@ void ui::StatisticsPage::initAlgos(const std::list<core::SegmentRenderer*>& algo
         barSet.append(0);
 
     updateRange();
+
+    useAlgosOnce();
+    updateBarValues();
+}
+
+void ui::StatisticsPage::useAlgosOnce()
+{
+    QImage image(1080, 1080, QImage::Format::Format_ARGB32);
+
+    constexpr auto tau = qDegreesToRadians(360.0);
+    constexpr auto angleStep = tau / 400;
+
+    core::Segment segment;
+    segment.color = QColor(Qt::red);
+    segment.x1 = 540;
+    segment.y1 = 540;
+
+    for (float angle = 0; angle < tau; angle += angleStep)
+    {
+        segment.x2 = segment.x1 + 500 * cos(angle);
+        segment.y2 = segment.y1 + 500 * sin(angle);
+
+        for (const auto& algo : segmentRenderers)
+            algo->drawSegment(image, segment);
+    }
+
+    for (const auto& algo : segmentRenderers)
+        algo->stopTiming();
 }
 
 void ui::StatisticsPage::updateBarValues()

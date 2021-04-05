@@ -5,27 +5,51 @@ void core::DDASegRen::drawClampedSegment(QImage& image, Segment& segment)
     QRgb color = segment.color.rgba();
     startTiming();
 
-    if (segment.x2 < segment.x1) // swap end points
+    const auto round = [](double a) -> int { return a <= std::floor(a) + 0.5 ? std::floor(a) : std::ceil(a); };
+
+    int x_start = std::round(segment.x1);
+    int y_start = std::round(segment.y1);
+    int x_end = std::round(segment.x2);
+    int y_end = std::round(segment.y2);
+
+    unsigned int deltaX = std::abs(x_end - x_start);
+    unsigned int deltaY = std::abs(y_end - y_start);
+
+    if (deltaX == 0 && deltaY == 0)
     {
-        std::swap(segment.x1, segment.x2);
-        std::swap(segment.y1, segment.y2);
+        image.setPixel(x_start, y_start, color);
     }
-
-    double x = segment.x1;
-    double y = segment.y1;
-
-    int deltaX = std::abs(segment.x1 - segment.x2) + 1;
-    int deltaY = std::abs(segment.y1 - segment.y2) + 1;
-    unsigned int L = std::floor(std::hypot(deltaX, deltaY) + 1);
-
-    double dx = (segment.x2 - segment.x1) / L;
-    double dy = (segment.y2 - segment.y1) / L;
-
-    for (unsigned int i = 0; i < L; i++)
+    else if (deltaX <= deltaY)
     {
-        image.setPixel(std::round(x), std::round(y), color);
-        x += dx;
-        y += dy;
+        double x = x_start;
+        double dx = double(x_end - x_start) / (y_end - y_start);
+
+        if (y_start <= y_end)
+        {
+            for (int y = y_start; y <= y_end; y++, x += dx)
+                image.setPixel(round(x), y, color);
+        }
+        else
+        {
+            for (int y = y_start; y >= y_end; y--, x -= dx)
+                image.setPixel(round(x), y, color);
+        }
+    }
+    else
+    {
+        double y = y_start;
+        double dy = double(y_end - y_start) / (x_end - x_start);
+
+        if (x_start <= x_end)
+        {
+            for (int x = x_start; x <= x_end; x++, y += dy)
+                image.setPixel(x, round(y), color);
+        }
+        else
+        {
+            for (int x = x_start; x >= x_end; x--, y -= dy)
+                image.setPixel(x, round(y), color);
+        }
     }
 
     stopTiming(deltaX, deltaY);

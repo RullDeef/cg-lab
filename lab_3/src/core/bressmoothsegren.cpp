@@ -32,7 +32,7 @@ void core::BresSmoothSegRen::drawClampedSegment(QImage& image, Segment& segment)
 
     int yDir = segment.y1 < segment.y2 ? 1 : -1;
 
-    float S_i = 0.5;
+    float S_i = 0.0;
     float m;
 
     if (deltaX < deltaY)
@@ -49,7 +49,7 @@ void core::BresSmoothSegRen::drawClampedSegment(QImage& image, Segment& segment)
                 plot(x, y, 1.0 - S_i);
                 x++;
             }
-        
+
             plot(x, y, S_i);
             y += yDir;
         }

@@ -1,5 +1,6 @@
 
 #include "stairspage.hpp"
+#include "../core/stairscounter.hpp"
 
 ui::StairsPage::StairsPage(QWidget *parent)
     : QWidget(parent)
@@ -29,22 +30,23 @@ void ui::StairsPage::InitAlgos(const std::list<core::SegmentRenderer*>& algos)
         line->setName(algo->getName());
 
         for (int i = 0; i <= 90; i++)
-            line->append(i, calcStairsCount(300, i));
+        {
+            core::Segment segment;
+            segment.color = Qt::black;
+            segment.x1 = 0.0;
+            segment.y1 = 0.0;
+
+            double angle = qDegreesToRadians(double(i));
+            segment.x2 = 300.0 * std::cos(angle);
+            segment.y2 = 300.0 * std::sin(angle);
+
+            line->append(i, core::StairsCounter::countStairsAmountForSegment(algo, segment));
+        }
 
         chart.addSeries(line);
         line->attachAxis(&lenAxis);
         line->attachAxis(&angleAxis);
     }
-}
-
-int ui::StairsPage::calcStairsCount(double segLength, int angleDeg)
-{
-    constexpr auto degToRad = 3.14159265358979323846 / 180;
-
-    if (angleDeg > 45)
-        angleDeg = 90 - angleDeg;
-
-    return std::round(segLength * std::sin(angleDeg * degToRad));
 }
 
 void ui::StairsPage::initChart()
@@ -54,7 +56,7 @@ void ui::StairsPage::initChart()
 
     lenAxis.setTitleText(u8"Количество ступенек");
     lenAxis.setTitleFont(font);
-    angleAxis.setTitleText(u8"Угол наклона отрезка");
+    angleAxis.setTitleText(u8"Угол наклона отрезка (градусы)");
     angleAxis.setTitleFont(font);
 
     chart.setTitle(u8"Анализ ступенчатости");

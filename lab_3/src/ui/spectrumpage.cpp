@@ -19,6 +19,9 @@ ui::SpectrumPage::SpectrumPage(QWidget *parent)
     segRenItem = new SegRenItem();
     canvasScene.addItem(segRenItem);
 
+    axisRenItem = new AxisRenItem();
+    canvasScene.addItem(axisRenItem);
+
     connect(ui.lengthInput, SIGNAL(valueChanged(int)), this, SLOT(setLength(int)));
     connect(ui.amountInput, SIGNAL(valueChanged(int)), this, SLOT(setAmount(int)));
 
@@ -33,6 +36,7 @@ ui::SpectrumPage::SpectrumPage(QWidget *parent)
 ui::SpectrumPage::~SpectrumPage()
 {
     delete segRenItem;
+    delete axisRenItem;
 }
 
 void ui::SpectrumPage::initAlgos(const std::list<core::SegmentRenderer*>& algos)
@@ -55,6 +59,15 @@ void ui::SpectrumPage::mousePressEvent(QMouseEvent* event)
     QPoint remapped = ui.colorInput->mapFromGlobal(event->globalPos());
     if (ui.colorInput->rect().contains(remapped))
         selectColor();
+}
+
+void ui::SpectrumPage::paintEvent(QPaintEvent* event)
+{
+    canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
+    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+    axisRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+
+    canvasScene.update();
 }
 
 void ui::SpectrumPage::selectColor()
@@ -81,9 +94,6 @@ void ui::SpectrumPage::clearCanvas()
 
 void ui::SpectrumPage::drawSpectrum(SegmentRenderer* renderer, QColor color)
 {
-    canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
-    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
-
     double x1 = segRenItem->boundingRect().center().x();
     double y1 = segRenItem->boundingRect().center().y();
 

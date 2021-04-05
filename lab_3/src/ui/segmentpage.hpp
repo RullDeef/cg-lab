@@ -6,6 +6,7 @@
 #include <vector>
 #include "ui_segmentpage.h"
 #include "segrenitem.hpp"
+#include "axisrenitem.hpp"
 #include "../core/segmentrenderer.hpp"
 
 namespace ui
@@ -21,6 +22,7 @@ namespace ui
         void initAlogs(const std::list<core::SegmentRenderer*>& algos);
 
         void mousePressEvent(QMouseEvent* event) override;
+        void paintEvent(QPaintEvent *event) override;
 
     public slots:
         inline void setX1(int value) { x1 = value; }
@@ -51,5 +53,6 @@ namespace ui
 
         QGraphicsScene canvasScene;
         SegRenItem* segRenItem;
+        AxisRenItem* axisRenItem;
     };
 }

@@ -48,6 +48,11 @@ namespace core
                 drawTimes.end(), 0.0, std::plus()) / drawTimes.size();
         }
 
+        inline void stopTiming()
+        {
+            timing_active = false;
+        }
+
     protected:
         void startTiming();
         void stopTiming(double dx, double dy);
@@ -57,6 +62,8 @@ namespace core
     private:
         const char* name;
         time_point_t startTime;
+
+        bool timing_active = true;
 
         size_t queueSize;
         std::list<double> drawTimes;

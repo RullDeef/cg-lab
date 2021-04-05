@@ -18,6 +18,10 @@ ui::SegmentPage::SegmentPage(QWidget *parent)
 
     segRenItem = new SegRenItem();
     canvasScene.addItem(segRenItem);
+
+    axisRenItem = new AxisRenItem();
+    canvasScene.addItem(axisRenItem);
+    axisRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
     
     connect(ui.x1Input, SIGNAL(valueChanged(int)), this, SLOT(setX1(int)));
     connect(ui.y1Input, SIGNAL(valueChanged(int)), this, SLOT(setY1(int)));
@@ -33,6 +37,7 @@ ui::SegmentPage::SegmentPage(QWidget *parent)
 ui::SegmentPage::~SegmentPage()
 {
     delete segRenItem;
+    delete axisRenItem;
 }
 
 void ui::SegmentPage::initAlogs(const std::list<core::SegmentRenderer*>& algos)
@@ -53,6 +58,17 @@ void ui::SegmentPage::mousePressEvent(QMouseEvent* event)
         selectColor();
 }
 
+void ui::SegmentPage::paintEvent(QPaintEvent* event)
+{
+    QWidget::paintEvent(event);
+
+    canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
+    axisRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
+
+    canvasScene.update();
+}
+
 void ui::SegmentPage::selectColor()
 {
     QColorDialog dialog;
@@ -66,12 +82,7 @@ void ui::SegmentPage::selectColor()
 
 void ui::SegmentPage::drawSegment()
 {
-    canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
-    segRenItem->setViewport(0, 0, ui.canvas->width(), ui.canvas->height());
-
     segRenItem->addSegment(x1, y1, x2, y2, color, segmentRenderers[algorithmIndex]);
-
-    canvasScene.update();
     ui.canvas->repaint();
 }
 

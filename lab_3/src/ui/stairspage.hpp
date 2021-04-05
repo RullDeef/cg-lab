@@ -20,7 +20,6 @@ namespace ui
         void InitAlgos(const std::list<core::SegmentRenderer*>& algos);
 
     private:
-        int calcStairsCount(double segLength, int angleDeg);
         void initChart();
 
         Ui::StairsPage ui;
