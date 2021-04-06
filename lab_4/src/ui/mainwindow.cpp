@@ -1,34 +1,44 @@
 #include "mainwindow.hpp"
 
-#include "../core/libellren.hpp"
-#include "../core/libcirren.hpp"
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    ellipseAlgorithms.push_back(std::make_shared<LibEllRen>());
-    circleAlgorithms.push_back(std::make_shared<LibCirRen>());
-
     ui.setupUi(this);
-
-    circlePage = std::make_unique<CirclePage>(this);
-    circlePage->initAlgos(circleAlgorithms);
-    ui.stackedWidget->addWidget(&*circlePage);
-
-    ellipsePage = std::make_unique<EllipsePage>(this);
-    ellipsePage->initAlgos(ellipseAlgorithms);
-    ui.stackedWidget->addWidget(&*ellipsePage);
-
-    connect(ui.ellipseButton, SIGNAL(clicked()), this, SLOT(selectEllipsePage()));
-    connect(ui.circleButton, SIGNAL(clicked()), this, SLOT(selectCirclePage()));
 }
 
-void MainWindow::selectEllipsePage()
+MainWindow::~MainWindow()
 {
-    ui.stackedWidget->setCurrentWidget(&*ellipsePage);
+    for (const auto& button : pushButtons)
+        delete button;
 }
 
-void MainWindow::selectCirclePage()
+void MainWindow::addInteractiveTab(ui::InteractiveTabWidget* tab)
 {
-    ui.stackedWidget->setCurrentWidget(&*circlePage);
+    QStackedWidget& stack = *ui.stackedWidget;
+    stack.addWidget(tab);
+
+    QPushButton* button = appendPushButton(tab->getName());
+    connect(button, &QPushButton::clicked, this, [&stack, &tab]()
+    {
+        stack.setCurrentWidget(tab);
+    });
+}
+
+QPushButton* MainWindow::appendPushButton(const QString& buttonText)
+{
+    QFont font;
+    font.setPointSize(14);
+
+    QPushButton* button = new QPushButton(this);
+    button->setFont(font);
+    button->setAutoDefault(false);
+    button->setFlat(true);
+    button->setText(buttonText);
+
+    pushButtons.push_back(button);
+    ui.buttonsList->insertWidget(ui.buttonsList->count() - 1, button);
+
+    return button;
 }

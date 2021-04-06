@@ -3,10 +3,11 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_mainwindow.h"
 
+#include <QPushButton>
 #include <vector>
 #include <memory>
-#include "ellipsepage.hpp"
-#include "circlepage.hpp"
+
+#include "tabs/interactivetabwidget.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -14,16 +15,16 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = Q_NULLPTR);
+    ~MainWindow();
 
-public slots:
-    void selectEllipsePage();
-    void selectCirclePage();
+    void addInteractiveTab(ui::InteractiveTabWidget* tab);
+
+private:
+    QPushButton* appendPushButton(const QString& string);
 
 private:
     Ui::MainWindowClass ui;
-    std::unique_ptr<EllipsePage> ellipsePage;
-    std::unique_ptr<CirclePage> circlePage;
+    std::vector<ui::InteractiveTabWidget*> tabWidgets;
 
-    std::vector<std::shared_ptr<EllipseRenderer>> ellipseAlgorithms;
-    std::vector<std::shared_ptr<CircleRenderer>> circleAlgorithms;
+    std::vector<QPushButton*> pushButtons;
 };

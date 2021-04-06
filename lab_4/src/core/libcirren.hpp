@@ -1,12 +1,16 @@
 #pragma once
 
-#include "circlerenderer.hpp"
+#include "primitiverenderer.hpp"
 
-class LibCirRen : public CircleRenderer
+namespace core
 {
-public:
-    LibCirRen(size_t queueSize = defaultQueueSize) :
-        CircleRenderer(u8"Библиотечный", queueSize) {}
+    class LibraryCircleRenderer : public PrimitiveRenderer<Circle>
+    {
+    public:
+        LibraryCircleRenderer(const char* name = u8"Библиотечный") : PrimitiveRenderer(name) {}
 
-    void drawCircle(QImage& image, const Circle& circle) override;
-};
+    protected:
+        void draw(QImage& image, const Circle& circle, QColor color) override;
+    };
+}
+

@@ -1,13 +1,13 @@
 #pragma once
 
 #include <QWidget>
-#include "ui_circlepage.h"
+//#include "ui_circlepage.h"
 
 #include <vector>
 #include <memory>
 #include <QGraphicsScene>
 
-#include "cirrenitem.hpp"
+//#include "cirrenitem.hpp"
 
 class CirclePage : public QWidget
 {
