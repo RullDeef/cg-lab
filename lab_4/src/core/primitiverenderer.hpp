@@ -81,14 +81,6 @@ namespace core
     public:
         PrimitiveRenderer(const char* name) : NamingStrategy(name) {}
 
-        void drawPrimitive(QPixmap* pixmap, const PrimitiveType& primitive, QColor color)
-        {
-            QImage image = pixmap->toImage().convertToFormat(QImage::Format_ARGB32);
-            draw(image, primitive, color);
-            pixmap->fromImage(image);
-        }
-
-    protected:
         virtual void draw(QImage& image, const PrimitiveType& primitive, QColor color) = 0;
     };
 }

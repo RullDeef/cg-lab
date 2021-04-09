@@ -2,16 +2,16 @@
 
 #include <vector>
 #include <functional>
-#include <QSpinBox>
-#include <QGraphicsScene>
-#include "interactivetabwidget.hpp"
-#include "ui_canvastabwidget.h"
-
 #include <QLabel>
+#include <QSpinBox>
 #include <QComboBox>
 #include <QPushButton>
-#include <QColorDialog>
 #include <QMouseEvent>
+#include <QColorDialog>
+#include <QGraphicsScene>
+#include <QGraphicsItem>
+#include "interactivetabwidget.hpp"
+#include "ui_canvastabwidget.h"
 
 namespace ui
 {
@@ -35,9 +35,12 @@ namespace ui
     class IntCanvasTabOption : public CanvasTabOption
     {
     public:
-        IntCanvasTabOption(const char* text, QGroupBox* box)
+        IntCanvasTabOption(const char* text, QGroupBox* box, int minValue, int maxValue)
             : CanvasTabOption(text, box), input(new QSpinBox(box))
-        {}
+        {
+            input->setMinimum(minValue);
+            input->setMaximum(maxValue);
+        }
 
         ~IntCanvasTabOption() { delete input; }
 
@@ -137,9 +140,9 @@ namespace ui
             for (const auto& action : actions) delete action;
         }
 
-        void addIntOption(const char* text, int& value)
+        void addIntOption(const char* text, int& value, int minValue, int maxValue)
         {
-            IntCanvasTabOption* option = new IntCanvasTabOption(text, group);
+            IntCanvasTabOption* option = new IntCanvasTabOption(text, group, minValue, maxValue);
             addOption(option);
 
             connect((QSpinBox*)option->getInput(), (void(QSpinBox::*)(int))&QSpinBox::valueChanged,
@@ -206,6 +209,37 @@ namespace ui
         std::vector<QPushButton*> actions;
     };
 
+    class CanvasDrawerItem : public QGraphicsItem
+    {
+    public:
+        CanvasDrawerItem(QSize size = QSize(1, 1)) : image(QPixmap(size).toImage())
+        {
+            image.convertTo(QImage::Format::Format_ARGB32);
+            image.fill(Qt::white);
+        }
+
+        void resizeImage(QSize size)
+        {
+            if (image.size() != size)
+            {
+                image = QPixmap(size).toImage();
+                image.convertTo(QImage::Format::Format_ARGB32);
+                image.fill(Qt::white);
+            }
+        }
+
+        QRectF boundingRect() const override { return QRectF(QPointF(0, 0), image.size()); }
+        QImage& getImage() { return image; }
+
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override
+        {
+            painter->drawImage(0, 0, image);
+        }
+
+    private:
+        QImage image;
+    };
+
     class CanvasTabWidget : public InteractiveTabWidget, public OptionsStrategy
     {
         Q_OBJECT
@@ -217,42 +251,39 @@ namespace ui
             ui.setupUi(this);
             initOptionStrategy(ui.optionsGroup, ui.inputForm);
 
-            canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
             ui.canvas->setScene(&canvasScene);
-
-            pixmap = QPixmap(ui.canvas->width(), ui.canvas->height());
-            pixmap.fill(Qt::red);
-            pixmapItem = canvasScene.addPixmap(pixmap);
+            canvasDrawer = new CanvasDrawerItem();
+            canvasScene.addItem(canvasDrawer);
         }
 
-        void resizeEvent(QResizeEvent* event) override
+        ~CanvasTabWidget()
         {
-            pixmap = QPixmap(ui.canvas->width(), ui.canvas->height());
-            pixmap.fill(Qt::red);
-            canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
+            delete canvasDrawer;
+        }
+
+        void paintEvent(QPaintEvent* event)
+        {
+            InteractiveTabWidget::paintEvent(event);
+            canvasDrawer->resizeImage(ui.canvas->size());
+
+            canvasScene.setSceneRect(QRectF(QPointF(0, 0), ui.canvas->size()));
+            canvasScene.update();
         }
 
         void updateCanvas()
         {
-            canvasScene.setSceneRect(0, 0, ui.canvas->width(), ui.canvas->height());
+            canvasScene.setSceneRect(QRectF(QPointF(0, 0), ui.canvas->size()));
+            canvasDrawer->update();
             canvasScene.update();
             ui.canvas->repaint();
         }
 
-        void clearCanvas(QColor color = Qt::white)
-        {
-            pixmap.fill(color);
-            updateCanvas();
-        }
-
     protected:
-
-        QPixmap pixmap;
+        CanvasDrawerItem* canvasDrawer;
 
     private:
         Ui::canvasTabWidget ui;
 
         QGraphicsScene canvasScene;
-        QGraphicsPixmapItem* pixmapItem;
     };
 }

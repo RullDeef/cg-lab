@@ -1,8 +1,7 @@
+#include <iostream>
 #include <QMouseEvent>
 #include <QColorDialog>
 #include "circletab.hpp"
-
-#include <iostream>
 
 using namespace ui;
 using namespace core;
@@ -10,9 +9,9 @@ using namespace core;
 CircleTab::CircleTab(std::map<QString, PrimitiveRenderer<Circle>*> renderers, QWidget *parent)
     : CanvasTabWidget(u8"Окружности", parent)
 {
-    addIntOption(u8"центр x", circleX);
-    addIntOption(u8"центр y", circleY);
-    addIntOption(u8"радиус", circleR);
+    addIntOption(u8"центр x", circleX, 0, 1400);
+    addIntOption(u8"центр y", circleY, 0, 1400);
+    addIntOption(u8"радиус", circleR, 0, 2000);
 
     QStringList names;
     for (const auto& renderer : renderers)
@@ -35,7 +34,12 @@ void CircleTab::drawCircle()
     circle.y = circleY;
     circle.r = circleR;
     
-    renderers[rendererIndex]->drawPrimitive(&pixmap, circle, color);
+    renderers[rendererIndex]->draw(canvasDrawer->getImage(), circle, color);
+    updateCanvas();
+}
 
+void CircleTab::clearCanvas()
+{
+    canvasDrawer->getImage().fill(Qt::white);
     updateCanvas();
 }

@@ -100,12 +100,15 @@
     <QtRcc Include="src\ui\mainwindow.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\brescirren.cpp" />
     <ClCompile Include="src\core\libcirren.cpp" />
+    <ClCompile Include="src\core\paramcirren.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ui\mainwindow.cpp" />
     <ClCompile Include="src\ui\tabs\canvastabwidget.cpp" />
     <ClCompile Include="src\ui\tabs\circletab.cpp" />
     <ClCompile Include="src\ui\tabs\interactivetabwidget.cpp" />
+    <ClCompile Include="src\ui\tabs\spectrumtab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="src\ui\mainwindow.ui" />
@@ -115,9 +118,12 @@
     <QtMoc Include="src\ui\mainwindow.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\brescirren.hpp" />
     <ClInclude Include="src\core\libcirren.hpp" />
+    <ClInclude Include="src\core\paramcirren.hpp" />
     <ClInclude Include="src\core\primitiverenderer.hpp" />
     <ClInclude Include="src\ui\tabs\circletab.hpp" />
+    <ClInclude Include="src\ui\tabs\spectrumtab.hpp" />
     <QtMoc Include="src\ui\tabs\canvastabwidget.hpp" />
     <ClInclude Include="src\ui\tabs\interactivetabwidget.hpp" />
   </ItemGroup>

@@ -4,10 +4,10 @@
 
 namespace core
 {
-    class LibraryCircleRenderer : public PrimitiveRenderer<Circle>
+    class BresenhemCircleRenderer : public PrimitiveRenderer<Circle>
     {
     public:
-        LibraryCircleRenderer(const char* name = u8"Библиотечный") : PrimitiveRenderer(name) {}
+        BresenhemCircleRenderer(const char* name = u8"Брезенхэм") : PrimitiveRenderer(name) {}
 
         void draw(QImage& image, const Circle& circle, QColor color) override;
     };

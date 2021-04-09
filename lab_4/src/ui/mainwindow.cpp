@@ -20,7 +20,8 @@ void MainWindow::addInteractiveTab(ui::InteractiveTabWidget* tab)
     stack.addWidget(tab);
 
     QPushButton* button = appendPushButton(tab->getName());
-    connect(button, &QPushButton::clicked, this, [&stack, &tab]()
+
+    connect(button, &QPushButton::clicked, this, [&stack, tab]()
     {
         stack.setCurrentWidget(tab);
     });
