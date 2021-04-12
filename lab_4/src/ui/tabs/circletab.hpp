@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include "../core/primitiverenderer.hpp"
 #include "canvastabwidget.hpp"
 
@@ -9,7 +8,7 @@ namespace ui
     class CircleTab : public CanvasTabWidget
     {
     public:
-        CircleTab(std::map<QString, core::PrimitiveRenderer<core::Circle>*> renderers, QWidget* parent = Q_NULLPTR);
+        CircleTab(core::RenderersContainer<core::Circle> renderers, QWidget* parent = Q_NULLPTR);
 
         void drawCircle();
         void clearCanvas();

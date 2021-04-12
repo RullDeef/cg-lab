@@ -6,7 +6,7 @@
 using namespace ui;
 using namespace core;
 
-CircleTab::CircleTab(std::map<QString, PrimitiveRenderer<Circle>*> renderers, QWidget *parent)
+CircleTab::CircleTab(RenderersContainer<Circle> renderers, QWidget *parent)
     : CanvasTabWidget(u8"Окружности", parent)
 {
     addIntOption(u8"центр x", circleX, 0, 1400);

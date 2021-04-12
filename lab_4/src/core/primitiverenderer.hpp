@@ -2,6 +2,7 @@
 
 #include <QPainter>
 #include <chrono>
+#include <map>
 
 namespace core
 {
@@ -83,4 +84,7 @@ namespace core
 
         virtual void draw(QImage& image, const PrimitiveType& primitive, QColor color) = 0;
     };
+
+    template<typename PrimitiveType, typename std::enable_if<std::is_base_of<PrimitiveBase, PrimitiveType>::value>::type* = nullptr>
+    using RenderersContainer = std::map<QString, core::PrimitiveRenderer<PrimitiveType>*>;
 }

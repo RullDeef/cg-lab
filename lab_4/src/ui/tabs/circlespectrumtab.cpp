@@ -1,12 +1,12 @@
 #include <iostream>
 #include <QMouseEvent>
 #include <QColorDialog>
-#include "spectrumtab.hpp"
+#include "circlespectrumtab.hpp"
 
 using namespace ui;
 using namespace core;
 
-SpectrumTab::SpectrumTab(std::map<QString, PrimitiveRenderer<Circle>*> renderers, QWidget *parent)
+CircleSpectrumTab::CircleSpectrumTab(RenderersContainer<Circle> renderers, QWidget *parent)
     : CanvasTabWidget(u8"Спектр окружностей", parent)
 {
     addIntOption(u8"шаг радиуса", circleRStep, 1, 1000);
@@ -27,7 +27,7 @@ SpectrumTab::SpectrumTab(std::map<QString, PrimitiveRenderer<Circle>*> renderers
     addCustomAction(u8"очистить", [this]() { clearCanvas(); });
 }
 
-void SpectrumTab::drawSpectrum()
+void CircleSpectrumTab::drawSpectrum()
 {
     Circle circle;
     circle.x = canvasDrawer->boundingRect().center().x();
@@ -41,7 +41,7 @@ void SpectrumTab::drawSpectrum()
     updateCanvas();
 }
 
-void SpectrumTab::drawOverlay()
+void CircleSpectrumTab::drawOverlay()
 {
     Circle circle;
     circle.x = canvasDrawer->boundingRect().center().x();
@@ -55,7 +55,7 @@ void SpectrumTab::drawOverlay()
     updateCanvas();
 }
 
-void SpectrumTab::clearCanvas()
+void CircleSpectrumTab::clearCanvas()
 {
     canvasDrawer->getImage().fill(Qt::white);
     updateCanvas();

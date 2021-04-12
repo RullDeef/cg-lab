@@ -5,7 +5,7 @@
 
 namespace ui
 {
-    class InteractiveTabWidget : public QWidget
+    class InteractiveTabWidget : public virtual QWidget
     {
     public:
         InteractiveTabWidget(const char* name, QWidget* parent = Q_NULLPTR)

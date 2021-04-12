@@ -6,10 +6,10 @@
 
 namespace ui
 {
-    class SpectrumTab : public CanvasTabWidget
+    class CircleSpectrumTab : public CanvasTabWidget
     {
     public:
-        SpectrumTab(std::map<QString, core::PrimitiveRenderer<core::Circle>*> renderers, QWidget* parent = Q_NULLPTR);
+        CircleSpectrumTab(core::RenderersContainer<core::Circle> renderers, QWidget* parent = Q_NULLPTR);
 
         void drawSpectrum();
         void drawOverlay();
