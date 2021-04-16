@@ -22,10 +22,10 @@ void core::MedianCircleRenderer::draw(QImage& image, const Circle& circle, QColo
 
         int x = 0;
         int y = R;
-        image.setPixel(x0 + x, y0 + y, color.rgba());
-        image.setPixel(x0 - x, y0 + y, color.rgba());
-        image.setPixel(x0 - x, y0 - y, color.rgba());
-        image.setPixel(x0 + x, y0 - y, color.rgba());
+        image.setPixel(x0, y0 + R, color.rgba());
+        image.setPixel(x0, y0 - R, color.rgba());
+        image.setPixel(x0 - R, y0, color.rgba());
+        image.setPixel(x0 + R, y0, color.rgba());
 
         int f = std::round(1.25 - circle.r);
 

@@ -16,6 +16,8 @@ namespace ui
         {
             image.convertTo(QImage::Format::Format_ARGB32);
             image.fill(Qt::white);
+
+            renderAxis();
         }
 
         void resizeImage(QSize size)
@@ -25,6 +27,8 @@ namespace ui
                 image = QPixmap(size).toImage();
                 image.convertTo(QImage::Format::Format_ARGB32);
                 image.fill(Qt::white);
+
+                renderAxis();
             }
         }
 
@@ -33,10 +37,30 @@ namespace ui
 
         void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = Q_NULLPTR) override
         {
+            renderAxis();
             painter->drawImage(0, 0, image);
         }
 
     private:
+        void renderAxis()
+        {
+            QPainter painter(&image);
+
+            for (int x = 0; x < image.width(); x += 25)
+            {
+                painter.drawLine(x, 0, x, x % 100 == 0 ? 10 : 6);
+                if (x % 100 == 0)
+                    painter.drawText(x + 4, 10, QString::number(x));
+            }
+            
+            for (int y = 0; y < image.height(); y += 25)
+            {
+                painter.drawLine(0, y, y % 100 == 0 ? 10 : 6, y);
+                if (y % 100 == 0)
+                    painter.drawText(4, y, QString::number(y));
+            }
+        }
+
         QImage image;
     };
 
