@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Entry Point">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Line Renderers">
+      <UniqueIdentifier>{2bf10445-e990-4be4-aef6-ebc11e598c17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{da5bfd7e-d0c4-4105-a8de-1bff5ee075ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI Classes">
+      <UniqueIdentifier>{44caed96-846a-4ed7-90c4-1edb67e6ead4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base Tabs">
+      <UniqueIdentifier>{c4073c4c-784d-4188-b2f3-c98c65f0e507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Circle Renderers">
+      <UniqueIdentifier>{b77c8972-7328-466b-b026-78c905afaeac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ellipse Renderers">
+      <UniqueIdentifier>{138b2c99-af03-41c7-bb35-8f0c5997e6d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Region Renderers">
+      <UniqueIdentifier>{2582e522-5f7f-486f-b7cb-3b865abcad67}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Entry Point</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\bresintsegren.cpp">
+      <Filter>Line Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\bresrealsegren.cpp">
+      <Filter>Line Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\bressmoothsegren.cpp">
+      <Filter>Line Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\ddasegren.cpp">
+      <Filter>Line Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\librarysegren.cpp">
+      <Filter>Line Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\wusegren.cpp">
+      <Filter>Line Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\mainwindow.cpp">
+      <Filter>UI Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\base\charttabwidget.cpp">
+      <Filter>Base Tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\base\interactivetabwidget.cpp">
+      <Filter>Base Tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ellipse\bresellren.cpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ellipse\canonellren.cpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ellipse\libellren.cpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ellipse\medianellren.cpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ellipse\paramellren.cpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\circle\brescirren.cpp">
+      <Filter>Circle Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\circle\canoncirren.cpp">
+      <Filter>Circle Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\circle\libcirren.cpp">
+      <Filter>Circle Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\circle\mediancirren.cpp">
+      <Filter>Circle Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\circle\paramcirren.cpp">
+      <Filter>Circle Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\fill\boundregionrenderer.cpp">
+      <Filter>Entry Point</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\regionrenderer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab.cpp">
+      <Filter>UI Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\line\bresintsegren.hpp">
+      <Filter>Line Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\line\bresrealsegren.hpp">
+      <Filter>Line Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\line\bressmoothsegren.hpp">
+      <Filter>Line Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\line\ddasegren.hpp">
+      <Filter>Line Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\line\librarysegren.hpp">
+      <Filter>Line Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\line\wusegren.hpp">
+      <Filter>Line Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\primitiverenderer.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\tabs\base\interactivetabwidget.hpp">
+      <Filter>Base Tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\rendererscollection.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ellipse\bresellren.hpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ellipse\canonellren.hpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ellipse\libellren.hpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ellipse\medianellren.hpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ellipse\paramellren.hpp">
+      <Filter>Ellipse Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\circle\brescirren.hpp">
+      <Filter>Circle Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\circle\canoncirren.hpp">
+      <Filter>Circle Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\circle\libcirren.hpp">
+      <Filter>Circle Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\circle\mediancirren.hpp">
+      <Filter>Circle Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\circle\paramcirren.hpp">
+      <Filter>Circle Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\regionrenderer.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\fill\boundregionrenderer.hpp">
+      <Filter>Region Renderers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="src\ui\mainwindow.hpp">
+      <Filter>UI Classes</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\canvastabwidget.hpp">
+      <Filter>Base Tabs</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\charttabwidget.hpp">
+      <Filter>Base Tabs</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\widgetoptions.hpp">
+      <Filter>Base Tabs</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\tabblocks.hpp">
+      <Filter>Base Tabs</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab.hpp">
+      <Filter>UI Classes</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="src\ui\mainwindow.ui">
+      <Filter>UI Classes</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\tabs\base\canvastabwidget.ui">
+      <Filter>Base Tabs</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\tabs\base\charttabwidget.ui">
+      <Filter>Base Tabs</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\tabs\fillertab.ui">
+      <Filter>UI Classes</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="src\ui\mainwindow.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+</Project>
