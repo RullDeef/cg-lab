@@ -8,6 +8,11 @@ using namespace core;
 using namespace ui;
 
 
+ui::PointWrapper::~PointWrapper()
+{
+    disconnect();
+}
+
 BasicRegion::Point& BasicRegionWrapper::appendPoint(int x, int y)
 {
     BasicRegion::Point& point = region.appendPoint(x, y);
@@ -64,16 +69,27 @@ void Canvas::paintEvent(QPaintEvent* event)
 
 void PointSelector::selectPoint(int x, int y)
 {
-    constexpr auto offset = 10;
+    core::BasicRegion::Point* oldSelected = selectedPoint;
+    selectedPoint = pointAt(x, y);
 
-    selectedPoint = nullptr;
-    for (auto& point : (*region).getPoints())
+    if (oldSelected != selectedPoint)
+        emit selectionChanged(oldSelected, selectedPoint);
+}
+
+bool PointSelector::removePointAt(int x, int y)
+{
+    auto point = pointAt(x, y);
+
+    if (point)
     {
-        bool x_meets = point.x - offset < x&& x < point.x + offset;
-        bool y_meets = point.y - offset < y&& y < point.y + offset;
-        if (x_meets && y_meets)
-            selectedPoint = &point;
+        if (selectedPoint != nullptr && *point == *selectedPoint)
+            deselectPoint();
+
+        (*region).removePoint(*point);
+        return true;
     }
+
+    return false;
 }
 
 void PointSelector::drawSelection(QPainter& painter) const
@@ -89,6 +105,52 @@ void PointSelector::drawSelection(QPainter& painter) const
         painter.drawEllipse(QPoint(x, y), 10, 10);
         painter.drawEllipse(QPoint(x, y), 8, 8);
     }
+}
+
+core::BasicRegion::Point* PointSelector::pointAt(int x, int y)
+{
+    constexpr auto offset = 10;
+
+    for (auto& point : (*region).getPoints())
+    {
+        bool x_meets = point.x - offset < x&& x < point.x + offset;
+        bool y_meets = point.y - offset < y&& y < point.y + offset;
+        if (x_meets && y_meets)
+            return &point;
+    }
+
+    return nullptr;
+}
+
+
+bool LineConnector::removeLineAt(int x, int y)
+{
+    constexpr auto offset = 12.0;
+
+    auto& lines = (*region).getLines();
+
+    auto iter = std::find_if(lines.begin(), lines.end(),
+        [x, y, offset](const core::BasicRegion::Line& line)
+            { return line.closeTo(x, y, offset); });
+
+    if (iter != lines.end())
+    {
+        lines.erase(iter);
+        return true;
+    }
+
+    return false;
+}
+
+void LineConnector::selectionChanged(core::BasicRegion::Point* oldSelectedPoint, core::BasicRegion::Point* newSelectedPoint)
+{
+    if (!enabled)
+        return;
+
+    if (oldSelectedPoint == nullptr || newSelectedPoint == nullptr)
+        return;
+
+    (*region).connectPoints(*oldSelectedPoint, *newSelectedPoint);
 }
 
 
@@ -141,49 +203,83 @@ void PointConstrainter::drawConstraints(QPainter& painter, const QPoint& point)
 
 
 SmartCanvas::SmartCanvas(BasicRegionWrapper& region)
-    :  region(region), pointConstrainter(region), pointSelector(region)
+    :  region(region), pointConstrainter(region), pointSelector(region), lineConnector(region)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setMouseTracking(true);
     pointConstrainter.enable();
+    lineConnector.disable();
+
+    connect(&pointSelector, &PointSelector::selectionChanged, this, &SmartCanvas::selectionChangedSlot);
 }
 
 void SmartCanvas::regionModified()
 {
-    repaintCanvas();
+    update();
 }
 
 void SmartCanvas::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_G)
-        pointConstrainter.toggle();
+    switch (event->key())
+    {
+        case Qt::Key_G: pointConstrainter.toggle(); break;
+        case Qt::Key_L: lineConnector.toggle(); break;
+        default: break;
+    }
+}
+
+SmartCanvas::~SmartCanvas()
+{
+    QObject::disconnect();
+}
+
+void SmartCanvas::clearCanvas()
+{
+    pointSelector.deselectPoint();
+    getImage().fill(Qt::white);
+    update();
 }
 
 void SmartCanvas::mouseMoveEvent(QMouseEvent* event)
 {
     mousePos = event->pos();
     mousePos = pointConstrainter.constraint(mousePos);
-    repaintCanvas();
+    update();
 }
 
 void SmartCanvas::mousePressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::MouseButton::RightButton)
-    {
-        region.appendPoint(mousePos.x(), mousePos.y());
-    }
-    else if (event->button() == Qt::MouseButton::LeftButton)
-    {
-        auto oldSelected = pointSelector.getSelected();
+    if (event->button() == Qt::MouseButton::LeftButton)
         pointSelector.selectPoint(mousePos.x(), mousePos.y());
-
-        if (oldSelected != pointSelector.getSelected())
-            emit selectionChanged(pointSelector.getSelected());
+    else if (event->button() == Qt::MouseButton::RightButton)
+    {
+        if (QApplication::queryKeyboardModifiers().testFlag(Qt::KeyboardModifier::AltModifier))
+        {
+            if (!pointSelector.removePointAt(mousePos.x(), mousePos.y()))
+                lineConnector.removeLineAt(mousePos.x(), mousePos.y());
+        }
+        else
+        {
+            region.appendPoint(mousePos.x(), mousePos.y());
+            pointSelector.selectPoint(mousePos.x(), mousePos.y());
+        }
     }
 
+    update();
+}
+
+void SmartCanvas::paintEvent(QPaintEvent* event)
+{
+    Canvas::paintEvent(event);
     repaintCanvas();
+}
+
+void SmartCanvas::selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint)
+{
+    lineConnector.selectionChanged(oldPoint, newPoint);
+    emit selectionChanged(oldPoint, newPoint);
 }
 
 void SmartCanvas::repaintCanvas()
@@ -192,9 +288,12 @@ void SmartCanvas::repaintCanvas()
     image.fill(Qt::white);
 
     QPainter painter(&image);
+
+    drawAxes(painter);
     drawRegion(painter);
 
     pointSelector.drawSelection(painter);
+    lineConnector.drawHelpers(painter, mousePos);
 
     if (mouseEntered)
     {
@@ -210,7 +309,7 @@ void SmartCanvas::drawRegion(QPainter& painter)
     painter.setPen(Qt::black);
 
     for (const auto& line : (*region).getLines())
-        painter.drawLine(line.p1.x, line.p1.y, line.p2.x, line.p2.y);
+        painter.drawLine(line.p1->x, line.p1->y, line.p2->x, line.p2->y);
 
     for (const auto& point : (*region).getPoints())
         painter.drawEllipse(QPoint(point.x, point.y), 2, 2);
@@ -234,6 +333,25 @@ void SmartCanvas::drawCursor(QPainter& painter)
     painter.drawLine(x + padding, y, x + radius + margin, y);
 }
 
+void SmartCanvas::drawAxes(QPainter& painter)
+{
+    QImage& image = getImage();
+
+    for (int x = 0; x < image.width(); x += 25)
+    {
+        painter.drawLine(x, 0, x, x % 100 == 0 ? 10 : 6);
+        if (x % 100 == 0)
+            painter.drawText(x + 4, 10, QString::number(x));
+    }
+
+    for (int y = 0; y < image.height(); y += 25)
+    {
+        painter.drawLine(0, y, y % 100 == 0 ? 10 : 6, y);
+        if (y % 100 == 0)
+            painter.drawText(4, y, QString::number(y));
+    }
+}
+
 
 FillerTab::FillerTab(RegionRenderer* renderer)
     : InteractiveTabWidget(u8"заполнение"), renderer(renderer), regionWrapper(region)
@@ -246,25 +364,37 @@ FillerTab::FillerTab(RegionRenderer* renderer)
 
     hidePointEditor();
 
-    QObject::connect(canvas, &SmartCanvas::selectionChanged, this, &FillerTab::selectionChangedSlot);
+    connect(canvas, &SmartCanvas::selectionChanged, this, &FillerTab::selectionChangedSlot);
+
+    // clear canvas button
+    connect(ui.clearButton, &QPushButton::clicked, this, &FillerTab::clearButtonPressed);
 }
 
-void FillerTab::selectionChangedSlot(core::BasicRegion::Point* selectedPoint)
+void FillerTab::selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint)
 {
-    if (!selectedPoint)
+    if (!newPoint)
         hidePointEditor();
     else
     {
-        selectedPointWrapper.wrap(*selectedPoint);
+        selectedPointWrapper.wrap(*newPoint);
         connect(&selectedPointWrapper, &PointWrapper::modified, canvas, &SmartCanvas::regionModified);
 
         showPointEditor();
     }
 }
 
+void FillerTab::clearButtonPressed()
+{
+    canvas->clearCanvas();
+    (*regionWrapper).clear();
+}
+
 void FillerTab::showPointEditor()
 {
     ui.pointEditorGroup->show();
+
+    ui.xInput->disconnect();
+    ui.yInput->disconnect();
 
     ui.xInput->setValue((*selectedPointWrapper).x);
     ui.yInput->setValue((*selectedPointWrapper).y);

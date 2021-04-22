@@ -17,6 +17,7 @@ namespace ui
     public:
         PointWrapper() = default;
         PointWrapper(core::BasicRegion::Point& point) : point(&point) {}
+        virtual ~PointWrapper();
 
         void wrap(core::BasicRegion::Point& point) { this->point = &point; }
 
@@ -88,21 +89,55 @@ namespace ui
         CanvasRendererItem* canvasRenderer;
     };
 
-    class PointSelector
+    class PointSelector : public QObject
     {
+        Q_OBJECT
+
     public:
         PointSelector(BasicRegionWrapper& region) : region(region) {}
 
         void selectPoint(int x, int y);
+        void deselectPoint() { emit selectionChanged(selectedPoint, nullptr); selectedPoint = nullptr; }
         bool selected() const { return selectedPoint; }
 
         core::BasicRegion::Point* getSelected() { return selectedPoint; }
 
+        bool removePointAt(int x, int y);
+
         void drawSelection(QPainter& painter) const;
+
+    signals:
+        void selectionChanged(core::BasicRegion::Point* oldSelectedPoint, core::BasicRegion::Point* newSelectedPoint);
+
+    protected:
+        core::BasicRegion::Point* pointAt(int x, int y);
 
     private:
         BasicRegionWrapper& region;
         core::BasicRegion::Point* selectedPoint = nullptr;
+    };
+
+    class LineConnector : public QObject
+    {
+        Q_OBJECT
+
+    public:
+        LineConnector(BasicRegionWrapper& region) : region(region) {}
+
+        void enable() { enabled = true; }
+        void disable() { enabled = false; }
+        void toggle() { enabled = !enabled; }
+
+        bool removeLineAt(int x, int y);
+
+        void drawHelpers(QPainter& painter, const QPoint& mousePos) const {}
+
+    public slots:
+        void selectionChanged(core::BasicRegion::Point* oldSelectedPoint, core::BasicRegion::Point* newSelectedPoint);
+
+    private:
+        bool enabled = true;
+        BasicRegionWrapper& region;
     };
 
     class PointConstrainter
@@ -130,9 +165,12 @@ namespace ui
 
     public:
         SmartCanvas(BasicRegionWrapper& region);
+        virtual ~SmartCanvas();
+
+        void clearCanvas();
 
     signals:
-        void selectionChanged(core::BasicRegion::Point* point);
+        void selectionChanged(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint);
 
     public slots:
         void regionModified();
@@ -141,13 +179,18 @@ namespace ui
         virtual void keyPressEvent(QKeyEvent* event) override;
         virtual void mouseMoveEvent(QMouseEvent* event) override;
         virtual void mousePressEvent(QMouseEvent* event) override;
-        virtual void enterEvent(QEvent* event) override { mouseEntered = true; repaintCanvas(); }
-        virtual void leaveEvent(QEvent* event) override { mouseEntered = false; repaintCanvas(); }
+        virtual void enterEvent(QEvent* event) override { mouseEntered = true; update(); }
+        virtual void leaveEvent(QEvent* event) override { mouseEntered = false; update(); }
+
+        virtual void paintEvent(QPaintEvent* event) override;
+
+        void selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint);
 
     protected:
         void repaintCanvas();
         void drawRegion(QPainter& painter);
         void drawCursor(QPainter& painter);
+        void drawAxes(QPainter& painter);
 
     private:
         BasicRegionWrapper& region;
@@ -156,6 +199,7 @@ namespace ui
 
         PointConstrainter pointConstrainter;
         PointSelector pointSelector;
+        LineConnector lineConnector;
     };
 
     class FillerTab : public InteractiveTabWidget
@@ -166,7 +210,9 @@ namespace ui
         FillerTab(core::RegionRenderer* renderer);
 
     public slots:
-        void selectionChangedSlot(core::BasicRegion::Point* selectedPoint);
+        void selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint);
+
+        void clearButtonPressed();
 
     protected:
         void showPointEditor();

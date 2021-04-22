@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include <list>
+#include <cmath>
 #include "primitiverenderer.hpp"
 
 namespace core
@@ -20,53 +21,123 @@ namespace core
             {
                 return x == p.x && y == p.y;
             }
+
+            inline double distance(int x, int y) const
+            {
+                return hypot(this->x - x, this->y - y);
+            }
+
+            inline double distance(const Point& p) const
+            {
+                return hypot(x - p.x, y - p.y);
+            }
         };
 
         struct Line
         {
-            Point p1;
-            Point p2;
+            const Point* p1;
+            const Point* p2;
 
-            Line() = default;
-            Line(const Point& p1, const Point& p2) : p1(p1), p2(p2) {}
+            Line(const Point& p1, const Point& p2) : p1(&p1), p2(&p2) {}
 
-            inline bool isHorizontal() const { return p1.y == p2.y; }
+            inline bool isHorizontal() const { return p1->y == p2->y; }
 
             inline operator Segment() const
             {
                 Segment segment;
-                segment.x1 = p1.x; segment.y1 = p1.y;
-                segment.x2 = p2.x; segment.y2 = p2.y;
+                segment.x1 = p1->x; segment.y1 = p1->y;
+                segment.x2 = p2->x; segment.y2 = p2->y;
                 return segment;
             }
 
             inline bool operator<(const Line& seg) const
             {
-                return std::min(p1.y, p2.y) < std::min(seg.p1.y, seg.p2.y);
+                return std::min(p1->y, p2->y) < std::min(seg.p1->y, seg.p2->y);
             }
 
             inline bool operator==(const Line& seg) const
             {
-                return p1 == seg.p1 && p2 == seg.p2;
+                return *p1 == *(seg.p1) && *p2 == *(seg.p2) || *p1 == *(seg.p2) && *p2 == *(seg.p1);
+            }
+
+            bool closeTo(int x, int y, double offset) const
+            {
+                double distance = 0;
+
+                double v_x = p2->x - p1->x;
+                double v_y = p2->y - p1->y;
+
+                double w1_x = p1->x - x;
+                double w1_y = p1->y - y;
+
+                double w2_x = p2->x - x;
+                double w2_y = p2->y - y;
+
+                if (w1_x * v_x + w1_y * v_y >= 0)
+                    distance = p1->distance(x, y);
+
+                else if (w2_x * v_x + w2_y * v_y <= 0)
+                    distance = p2->distance(x, y);
+
+                else
+                    distance = abs(w1_x * w2_y - w2_x * w1_y) / p1->distance(*p2);
+
+                return distance < offset;
             }
         };
 
-        std::vector<Line> getLines() const;
-        std::vector<Point>& getPoints() { return points; }
-        const std::vector<Point>& getPoints() const { return points; }
-        Point& pointAt(size_t index) { return points[index]; }
+        std::list<Line>& getLines() { return lines; }
+        const std::list<Line>& getLines() const { return lines; }
+        std::list<Point>& getPoints() { return points; }
+        const std::list<Point>& getPoints() const { return points; }
+
         Point& appendPoint(int x, int y)
         {
             points.push_back(Point(x, y));
             return points.back();
         }
 
-        void clear() { points.clear(); }
+        void removePoint(const Point& point)
+        {
+            auto iter = std::find(points.begin(), points.end(), point);
+            if (iter != points.end())
+            {
+                lines.erase(std::remove_if(lines.begin(), lines.end(),
+                    [&point](const Line& line)
+                        { return *(line.p1) == point || *(line.p2) == point; }),
+                    lines.end());
+                points.erase(iter);
+            }
+        }
+
+        bool pointsConnected(const Point& p1, const Point& p2) const
+        {
+            Line connection(p1, p2);
+            for (const auto& line : lines)
+                if (line == connection)
+                    return true;
+            return false;
+        }
+
+        void connectPoints(const Point& p1, const Point& p2)
+        {
+            if (!pointsConnected(p1, p2))
+                lines.push_back(Line(p1, p2));
+        }
+
+        void removeConnection(const Line& connection)
+        {
+            auto iter = std::find(lines.begin(), lines.end(), connection);
+            lines.erase(iter);
+        }
+
+        void clear() { lines.clear();  points.clear(); }
 
         QRectF getBoundingBox() const;
 
     private:
-        std::vector<Point> points;
+        std::list<Point> points;
+        std::list<Line> lines;
     };
 
     class RegionRenderer : public NamingStrategy, public TimingStrategy
