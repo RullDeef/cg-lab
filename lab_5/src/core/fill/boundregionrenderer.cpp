@@ -1,13 +1,12 @@
 #include <cmath>
 #include "boundregionrenderer.hpp"
 
-void core::BoundRegionRenderer::fill(QImage& image, const BasicRegion& region, QColor color)
+void core::AsyncBoundRegionRenderer::fill(QImage& image, const BasicRegion& region, QColor color)
 {
-    QColor backgroud = Qt::white;
-    QRectF box = region.getBoundingBox();
+    if (region.getLines().empty())
+        return;
 
-    int minY = std::round(box.top());
-    int maxY = std::round(box.bottom());
+    QColor backgroud = Qt::white;
 
     int boundX = 0;
     for (const auto& point : region.getPoints()) boundX += point.x;
@@ -18,15 +17,23 @@ void core::BoundRegionRenderer::fill(QImage& image, const BasicRegion& region, Q
         if (line.isHorizontal())
             continue;
 
-        double dx = double(line.p2->x - line.p1->x) / (line.p2->y - line.p1->y);
-        double xReal = line.p1->x;
+        int x_min = line.p1->x, y_min = line.p1->y;
+        int x_max = line.p2->x, y_max = line.p2->y;
 
-        int yDir = line.p1->y < line.p2->y ? 1 : -1;
-        for (int y = line.p1->y; y <= line.p2->y; y += yDir, xReal += dx)
+        if (y_min > y_max)
+        {
+            std::swap(x_min, x_max);
+            std::swap(y_min, y_max);
+        }
+
+        double xReal = x_min;
+        double dx = double(x_max - x_min) / (y_max - y_min);
+
+        for (int y = y_min; y < y_max; y++, xReal += dx)
         {
             for (int x = std::round(xReal); x < boundX; x++)
             {
-                if (image.pixel(x, y) == backgroud.rgba())
+                if (image.pixel(x, y) != color.rgba())
                     image.setPixel(x, y, color.rgba());
                 else
                     image.setPixel(x, y, backgroud.rgba());
@@ -34,11 +41,90 @@ void core::BoundRegionRenderer::fill(QImage& image, const BasicRegion& region, Q
 
             for (int x = std::round(xReal); x >= boundX; x--)
             {
-                if (image.pixel(x, y) == backgroud.rgba())
+                if (image.pixel(x, y) != color.rgba())
                     image.setPixel(x, y, color.rgba());
                 else
                     image.setPixel(x, y, backgroud.rgba());
             }
+        }
+    }
+}
+
+void core::AsyncBoundRegionRenderer::asyncFill(QImage& image, const BasicRegion& region, QColor color)
+{
+    if (region.getLines().empty())
+    {
+        finish();
+        return;
+    }
+
+    if (!initialized)
+    {
+        currentRegion = region.clone();
+
+        boundX = 0;
+        for (const auto& point : currentRegion.getPoints()) boundX += point.x;
+        boundX /= region.getPoints().size();
+
+        currentLine = currentRegion.getLines().begin();
+        currentY = std::min(currentLine->p1->y, currentLine->p2->y);
+
+        initialized = true;
+    }
+    else if (currentLine == currentRegion.getLines().end())
+        finish();
+    else
+    {
+        QColor backgroud = Qt::white;
+        if (currentLine->isHorizontal())
+        {
+            if (++currentLine == currentRegion.getLines().end())
+                finish();
+            else
+                currentY = std::min(currentLine->p1->y, currentLine->p2->y);
+
+            return;
+        }
+
+        const auto& line = *currentLine;
+
+        int x_min = line.p1->x, y_min = line.p1->y;
+        int x_max = line.p2->x, y_max = line.p2->y;
+
+        if (y_min > y_max)
+        {
+            std::swap(x_min, x_max);
+            std::swap(y_min, y_max);
+        }
+
+        double xReal = x_min + double(x_max - x_min) / (y_max - y_min) * (currentY - y_min);
+
+        if (currentY < y_max)
+        {
+            for (int x = std::round(xReal); x < boundX; x++)
+            {
+                if (image.pixel(x, currentY) != color.rgba())
+                    image.setPixel(x, currentY, color.rgba());
+                else
+                    image.setPixel(x, currentY, backgroud.rgba());
+            }
+
+            for (int x = std::round(xReal); x >= boundX; x--)
+            {
+                if (image.pixel(x, currentY) != color.rgba())
+                    image.setPixel(x, currentY, color.rgba());
+                else
+                    image.setPixel(x, currentY, backgroud.rgba());
+            }
+
+            currentY++;
+        }
+        else
+        {
+            if (++currentLine == currentRegion.getLines().end())
+                finish();
+            else
+                currentY = std::min(currentLine->p1->y, currentLine->p2->y);
         }
     }
 }

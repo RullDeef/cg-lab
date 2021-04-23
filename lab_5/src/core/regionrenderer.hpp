@@ -91,6 +91,24 @@ namespace core
         std::list<Point>& getPoints() { return points; }
         const std::list<Point>& getPoints() const { return points; }
 
+        BasicRegion clone() const
+        {
+            BasicRegion copy;
+            copy.points = getPoints();
+            copy.lines = getLines();
+
+            for (auto &line : copy.lines)
+            {
+                for (const auto& point : copy.points)
+                {
+                    if (*(line.p1) == point) line.p1 = &point;
+                    if (*(line.p2) == point) line.p2 = &point;
+                }
+            }
+
+            return copy;
+        }
+
         Point& appendPoint(int x, int y)
         {
             points.push_back(Point(x, y));
@@ -146,5 +164,21 @@ namespace core
         RegionRenderer(const char* name) : NamingStrategy(name) {}
 
         virtual void fill(QImage& image, const BasicRegion& region, QColor color) = 0;
+    };
+
+    class AsyncRegionRenderer : public RegionRenderer
+    {
+    public:
+        AsyncRegionRenderer(const char* name) : RegionRenderer(name) {}
+
+        void beginFill() { finished = false; }
+        bool isFinished() const { return finished; }
+
+        virtual void asyncFill(QImage& image, const BasicRegion& region, QColor color) = 0;
+
+        void finish() { finished = true; }
+
+    private:
+        bool finished = false;
     };
 }

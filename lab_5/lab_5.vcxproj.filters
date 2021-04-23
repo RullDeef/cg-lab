@@ -30,6 +30,9 @@
     <Filter Include="Region Renderers">
       <UniqueIdentifier>{2582e522-5f7f-486f-b7cb-3b865abcad67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI Classes\Filler Tab">
+      <UniqueIdentifier>{f7bbd4a6-c8ad-47a9-a871-afdc43a3ecd3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -92,14 +95,29 @@
     <ClCompile Include="src\core\circle\paramcirren.cpp">
       <Filter>Circle Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\fill\boundregionrenderer.cpp">
-      <Filter>Entry Point</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\regionrenderer.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\tabs\fillertab.cpp">
       <Filter>UI Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\fill\boundregionrenderer.cpp">
+      <Filter>Region Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\canvas.cpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\lineconnector.cpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\pointconstrainter.cpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\pointselector.cpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\smartcanvas.cpp">
+      <Filter>UI Classes\Filler Tab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +184,9 @@
     <ClInclude Include="src\core\fill\boundregionrenderer.hpp">
       <Filter>Region Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="src\ui\tabs\fillertab\pointconstrainter.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\ui\mainwindow.hpp">
@@ -185,6 +206,24 @@
     </QtMoc>
     <QtMoc Include="src\ui\tabs\fillertab.hpp">
       <Filter>UI Classes</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\basicregionwrapper.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\canvas.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\pointselector.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\lineconnector.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\smartcanvas.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\colorpickerwidget.hpp">
+      <Filter>UI Classes\Filler Tab</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

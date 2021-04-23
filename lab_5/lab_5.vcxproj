@@ -108,6 +108,11 @@
     <ClCompile Include="src\ui\tabs\base\charttabwidget.cpp" />
     <ClCompile Include="src\ui\tabs\base\interactivetabwidget.cpp" />
     <ClCompile Include="src\ui\tabs\fillertab.cpp" />
+    <ClCompile Include="src\ui\tabs\fillertab\canvas.cpp" />
+    <ClCompile Include="src\ui\tabs\fillertab\lineconnector.cpp" />
+    <ClCompile Include="src\ui\tabs\fillertab\pointconstrainter.cpp" />
+    <ClCompile Include="src\ui\tabs\fillertab\pointselector.cpp" />
+    <ClCompile Include="src\ui\tabs\fillertab\smartcanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\circle\brescirren.hpp" />
@@ -131,6 +136,13 @@
     <ClInclude Include="src\core\regionrenderer.hpp" />
     <ClInclude Include="src\core\rendererscollection.hpp" />
     <ClInclude Include="src\ui\tabs\base\interactivetabwidget.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab\basicregionwrapper.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab\canvas.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab\lineconnector.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab\colorpickerwidget.hpp" />
+    <ClInclude Include="src\ui\tabs\fillertab\pointconstrainter.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab\pointselector.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab\smartcanvas.hpp" />
     <QtMoc Include="src\ui\tabs\fillertab.hpp" />
     <QtMoc Include="src\ui\tabs\base\tabblocks.hpp" />
     <QtMoc Include="src\ui\tabs\base\widgetoptions.hpp" />
