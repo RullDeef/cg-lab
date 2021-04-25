@@ -22,6 +22,8 @@ namespace ui
         void clearCanvas();
         void clearOverlay();
 
+        void deselect() { pointSelector.deselectPoint(); }
+
         void setConstraintEnabled(bool enabled);
         void setLineEnabled(bool enabled);
 

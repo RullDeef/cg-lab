@@ -2,6 +2,7 @@
 
 #include <QFormLayout>
 #include <QCheckBox>
+#include <chrono>
 
 using namespace core;
 using namespace ui;
@@ -68,12 +69,18 @@ void FillerTab::lineToggled(bool checked)
 
 void FillerTab::fillButtonPressed()
 {
+    auto startTime = std::chrono::system_clock::now();
     canvas->fillRegion(core::BoundRegionRenderer(), colorPicker->getColor());
+    auto endTime = std::chrono::system_clock::now();
+
+    auto delta = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count();
+    ui.fillTime->setText(QString(u8"Время заполнения: ") + QString::number(delta) + u8" мкс");
 }
 
 void FillerTab::fillStepButtonPressed()
 {
     canvas->fillRegionWithStep(new core::AsyncBoundRegionRenderer, colorPicker->getColor());
+    ui.fillTime->setText(QString(u8"Время заполнения: --"));
 }
 
 void FillerTab::clearButtonPressed()
@@ -84,6 +91,7 @@ void FillerTab::clearButtonPressed()
 
 void ui::FillerTab::removeRegionButtonPressed()
 {
+    canvas->deselect();
     region.clear();
     canvas->update();
 }
