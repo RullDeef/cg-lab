@@ -68,6 +68,10 @@ void SmartCanvas::fillRegionWithStep(core::AsyncBucFillRenderer* renderer, const
     if (asyncRenderer)
         delete asyncRenderer;
 
+    core::LibSegmentRenderer segren;
+    for (const auto line : region->getLines())
+        segren.draw(fillOverlay, line, color);
+
     asyncRenderer = renderer;
     asyncRenderer->beginFill();
 

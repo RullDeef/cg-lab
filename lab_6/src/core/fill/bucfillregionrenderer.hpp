@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <stack>
 #include "../regionrenderer.hpp"
 
 namespace core
@@ -15,6 +15,9 @@ namespace core
 
     private:
         bool initialized = false;
+
+        std::stack<QPoint> pointStack;
+        QColor color;
     };
 
     using BucFillRegionRenderer = AsyncBucFillRegionRenderer;
