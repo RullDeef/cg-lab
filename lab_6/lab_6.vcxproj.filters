@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\core\regionrenderer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\mainwindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab.cpp">
+      <Filter>UI\Tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\canvas.cpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\lineconnector.cpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\pointconstrainter.cpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\pointselector.cpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab\smartcanvas.cpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\base\canvastabwidget.cpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\base\charttabwidget.cpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\base\interactivetabwidget.cpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\fill\boundregionrenderer.cpp">
+      <Filter>Core\Fillers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\fill\bucfillregionrenderer.cpp">
+      <Filter>Core\Fillers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\line\librarysegren.cpp">
+      <Filter>Core\Line</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\primitiverenderer.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\regionrenderer.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\rendererscollection.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\tabs\fillertab\pointconstrainter.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\tabs\base\interactivetabwidget.hpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\fill\boundregionrenderer.hpp">
+      <Filter>Core\Fillers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\fill\bucfillregionrenderer.hpp">
+      <Filter>Core\Fillers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\line\librarysegren.hpp">
+      <Filter>Core\Line</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{4301632e-164f-4ee7-8728-f0b1a9b44ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{5e04feb0-55a0-48d1-868a-0efafb1ef617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Tabs">
+      <UniqueIdentifier>{4e6a1b4c-a1d1-4e94-80da-81d34be586e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Tabs\Filler Tab">
+      <UniqueIdentifier>{7f7cb31d-e401-4932-90e4-a633f49c1d8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Tabs\Base">
+      <UniqueIdentifier>{57a5cf85-7b19-48fe-a60a-6eddce705e70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Fillers">
+      <UniqueIdentifier>{2e2cf17b-7dc0-42c8-b3b5-453a6462f254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Line">
+      <UniqueIdentifier>{51606535-1065-43ce-b0c0-4510620fdb08}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="src\ui\mainwindow.hpp">
+      <Filter>UI</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab.hpp">
+      <Filter>UI\Tabs</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\basicregionwrapper.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\canvas.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\colorpickerwidget.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\lineconnector.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\pointselector.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\fillertab\smartcanvas.hpp">
+      <Filter>UI\Tabs\Filler Tab</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\canvastabwidget.hpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\charttabwidget.hpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\tabblocks.hpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </QtMoc>
+    <QtMoc Include="src\ui\tabs\base\widgetoptions.hpp">
+      <Filter>UI\Tabs\Base</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="src\ui\mainwindow.qrc">
+      <Filter>UI</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="src\ui\mainwindow.ui">
+      <Filter>UI</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\tabs\fillertab.ui">
+      <Filter>UI\Tabs</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\tabs\base\canvastabwidget.ui">
+      <Filter>UI\Tabs\Base</Filter>
+    </QtUic>
+    <QtUic Include="src\ui\tabs\base\charttabwidget.ui">
+      <Filter>UI\Tabs\Base</Filter>
+    </QtUic>
+  </ItemGroup>
+</Project>
