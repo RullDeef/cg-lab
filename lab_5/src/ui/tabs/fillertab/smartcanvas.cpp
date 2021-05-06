@@ -45,9 +45,10 @@ void SmartCanvas::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void SmartCanvas::fillRegion(core::RegionRenderer& renderer, const QColor& color)
+long long SmartCanvas::fillRegion(core::RegionRenderer& renderer, const QColor& color)
 {
     renderer.fill(fillOverlay, *region, color);
+    return renderer.getDuration().count();
 }
 
 void SmartCanvas::fillRegionWithStep(core::AsyncRegionRenderer* renderer, const QColor& color)

@@ -69,12 +69,8 @@ void FillerTab::lineToggled(bool checked)
 
 void FillerTab::fillButtonPressed()
 {
-    auto startTime = std::chrono::system_clock::now();
-    canvas->fillRegion(core::BoundRegionRenderer(), colorPicker->getColor());
-    auto endTime = std::chrono::system_clock::now();
-
-    auto delta = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count();
-    ui.fillTime->setText(QString(u8"Время заполнения: ") + QString::number(delta) + u8" мкс");
+    long long delta = canvas->fillRegion(core::BoundRegionRenderer(), colorPicker->getColor());
+    ui.fillTime->setText(QString(u8"Время заполнения: ") + QString::number(delta / 1000.0f) + u8" мкс");
 }
 
 void FillerTab::fillStepButtonPressed()

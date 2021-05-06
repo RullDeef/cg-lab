@@ -3,8 +3,13 @@
 
 void core::AsyncBoundRegionRenderer::fill(QImage& image, const BasicRegion& region, QColor color)
 {
+    beginTiming();
+
     if (region.getLines().empty())
+    {
+        endTiming();
         return;
+    }
 
     QColor backgroud = Qt::white;
 
@@ -48,6 +53,8 @@ void core::AsyncBoundRegionRenderer::fill(QImage& image, const BasicRegion& regi
             }
         }
     }
+
+    endTiming();
 }
 
 void core::AsyncBoundRegionRenderer::asyncFill(QImage& image, const BasicRegion& region, QColor color)

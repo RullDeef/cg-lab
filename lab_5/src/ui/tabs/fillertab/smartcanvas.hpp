@@ -16,7 +16,7 @@ namespace ui
         SmartCanvas(BasicRegionWrapper& region);
         virtual ~SmartCanvas();
 
-        void fillRegion(core::RegionRenderer& renderer, const QColor& color);
+        long long fillRegion(core::RegionRenderer& renderer, const QColor& color);
         void fillRegionWithStep(core::AsyncRegionRenderer* renderer, const QColor& color);
 
         void clearCanvas();
