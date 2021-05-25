@@ -10,8 +10,8 @@ namespace core
     public:
         AsyncBoundRegionRenderer() : AsyncRegionRenderer(u8"Заполнение с перегородкой") {}
 
-        void fill(QImage& image, const BasicRegion& region, QColor color) override;
-        void asyncFill(QImage& image, const BasicRegion& region, QColor color) override;
+        void fill(QImage& image, const BasicRegion& region, QColor color, int bound) override;
+        void asyncFill(QImage& image, const BasicRegion& region, QColor color, int bound) override;
 
     private:
         bool initialized = false;

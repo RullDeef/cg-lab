@@ -47,7 +47,26 @@ void SmartCanvas::keyPressEvent(QKeyEvent* event)
 
 long long SmartCanvas::fillRegion(core::RegionRenderer& renderer, const QColor& color)
 {
-    renderer.fill(fillOverlay, *region, color);
+    int bound = 0;
+    int yMin = size().height();
+    int yMax = 0;
+    constexpr int yOffset = 20;
+
+    for (const auto& line : region->getLines())
+    {
+        bound += line.p1->x;
+        yMin = std::min(yMin, line.p1->y - yOffset);
+        yMax = std::max(yMax, line.p1->y + yOffset);
+    }
+    bound /= region->getLines().size();
+
+    {
+        QPainter painter(&fillOverlay);
+        painter.setPen(QPen(Qt::red, 1));
+        painter.drawLine(bound, yMax, bound, yMax);
+    }
+
+    renderer.fill(fillOverlay, *region, color, bound);
     return renderer.getDuration().count();
 }
 
@@ -61,7 +80,7 @@ void SmartCanvas::fillRegionWithStep(core::AsyncRegionRenderer* renderer, const 
     asyncRenderer = renderer;
     asyncRenderer->beginFill();
 
-    timer->start(30);
+    timer->start(1);
 }
 
 void SmartCanvas::clearCanvas()
@@ -153,9 +172,15 @@ void ui::SmartCanvas::rendererLoop()
         }
         else
         {
-            asyncRenderer->asyncFill(fillOverlay, *region, color);
+            int bound = 0;
+            for (const auto& line : region->getLines())
+                bound += line.p1->x;
+            bound /= region->getLines().size();
+
+            for (int i = 0; i < 5; i++)
+                asyncRenderer->asyncFill(fillOverlay, *region, color, bound);
             repaint();
-            
+
             if (asyncRenderer->isFinished())
             {
                 delete asyncRenderer;

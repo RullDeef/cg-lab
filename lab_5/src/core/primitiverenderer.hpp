@@ -68,15 +68,31 @@ namespace core
         using time_point_t = std::chrono::high_resolution_clock::time_point;
 
     public:
-        durr_t getDuration() { return std::chrono::duration_cast<durr_t>(endTime - startTime); }
+        durr_t getDuration() {
+            durr_t delta = std::chrono::duration_cast<durr_t>(endTime - startTime);
+            return delta - pauseTotal;
+        }
 
     protected:
-        void beginTiming() { startTime = std::chrono::high_resolution_clock::now(); }
+        void beginTiming() {
+            startTime = std::chrono::high_resolution_clock::now();
+            pauseTotal = durr_t::zero();
+        }
+
         void endTiming() { endTime = std::chrono::high_resolution_clock::now(); }
+
+        void pauseTiming() { pauseTime = std::chrono::high_resolution_clock::now(); }
+        void resumeTiming() {
+            time_point_t end = std::chrono::high_resolution_clock::now();
+            pauseTotal += std::chrono::duration_cast<durr_t>(end - pauseTime);
+        }
 
     private:
         time_point_t startTime;
         time_point_t endTime;
+
+        durr_t pauseTotal;
+        time_point_t pauseTime;
     };
 
     template<typename PrimitiveType, typename std::enable_if<std::is_base_of<PrimitiveBase, PrimitiveType>::value>::type* = nullptr>

@@ -163,7 +163,7 @@ namespace core
     public:
         RegionRenderer(const char* name) : NamingStrategy(name) {}
 
-        virtual void fill(QImage& image, const BasicRegion& region, QColor color) = 0;
+        virtual void fill(QImage& image, const BasicRegion& region, QColor color, int bound) = 0;
     };
 
     class AsyncRegionRenderer : public RegionRenderer
@@ -174,7 +174,7 @@ namespace core
         void beginFill() { finished = false; }
         bool isFinished() const { return finished; }
 
-        virtual void asyncFill(QImage& image, const BasicRegion& region, QColor color) = 0;
+        virtual void asyncFill(QImage& image, const BasicRegion& region, QColor color, int bound) = 0;
 
         void finish() { finished = true; }
 
