@@ -55,6 +55,7 @@ namespace ui
         void drawRegion(QPainter& painter);
         void drawCursor(QPainter& painter);
         void drawAxes(QPainter& painter);
+        void drawBound(QPainter& painter);
 
     private:
         bool mouseEntered = false;
