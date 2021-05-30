@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>740</width>
-    <height>694</height>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,60 +52,6 @@
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
-      <item>
-       <widget class="QGroupBox" name="pointEditorGroup">
-        <property name="title">
-         <string>Выделенная точка</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <layout class="QFormLayout" name="pointEditor">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>X</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="xInput">
-             <property name="maximum">
-              <number>3000</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QSpinBox" name="yInput">
-             <property name="maximum">
-              <number>3000</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>1000</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item>
        <widget class="QGroupBox" name="fillPointGroup">
         <property name="title">
@@ -155,6 +101,19 @@
        </widget>
       </item>
       <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>1000</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QLabel" name="fillTime">
         <property name="font">
          <font>
@@ -189,9 +148,7 @@
          </font>
         </property>
         <property name="text">
-         <string>ЛКМ - выделение точек
-ПКМ - добавление точек
-Alt + ПКМ - удаление точек/линий</string>
+         <string>ЛКМ - рисование контура</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>
@@ -202,38 +159,6 @@ Alt + ПКМ - удаление точек/линий</string>
        <widget class="Line" name="line">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="constraintCheckBox">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>50</weight>
-          <bold>false</bold>
-          <underline>false</underline>
-          <kerning>true</kerning>
-         </font>
-        </property>
-        <property name="text">
-         <string>Привязки</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="linesCheckBox">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>50</weight>
-          <bold>false</bold>
-          <underline>false</underline>
-          <kerning>true</kerning>
-         </font>
-        </property>
-        <property name="text">
-         <string>Добавление линий</string>
         </property>
        </widget>
       </item>
@@ -258,7 +183,7 @@ Alt + ПКМ - удаление точек/линий</string>
       <item>
        <widget class="QPushButton" name="fillStepButton">
         <property name="text">
-         <string>заполнить пошагово</string>
+         <string>заполнить с задержкой</string>
         </property>
        </widget>
       </item>

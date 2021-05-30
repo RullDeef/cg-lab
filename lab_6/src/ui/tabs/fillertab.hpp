@@ -16,25 +16,17 @@ namespace ui
         Q_OBJECT
 
     public:
-        FillerTab(core::RegionRenderer* renderer);
+        FillerTab(core::AsyncBucFillRenderer* renderer);
 
     public slots:
-        void selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint);
-
         void specialPointChanged(int x, int y);
-
-        void constraintToggled(bool checked);
-        void lineToggled(bool checked);
 
         void fillButtonPressed();
         void fillStepButtonPressed();
         void clearButtonPressed();
         void removeRegionButtonPressed();
         void clearOverlayButtonPressed();
-
-    protected:
-        void showPointEditor();
-        void hidePointEditor();
+        void colorPicked(QColor color);
 
     private:
         Ui::fillerTab ui;
@@ -42,10 +34,6 @@ namespace ui
         SmartCanvas* canvas;
         ColorPickerWidget* colorPicker;
 
-        core::RegionRenderer* renderer;
-        core::BasicRegion region;
-        BasicRegionWrapper regionWrapper;
-
-        PointWrapper selectedPointWrapper;
+        core::AsyncBucFillRenderer* renderer;
     };
 }

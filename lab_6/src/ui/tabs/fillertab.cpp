@@ -10,19 +10,19 @@ using namespace core;
 using namespace ui;
 
 
-FillerTab::FillerTab(RegionRenderer* renderer)
-    : InteractiveTabWidget(u8"заполнение"), renderer(renderer), regionWrapper(region)
+FillerTab::FillerTab(AsyncBucFillRenderer* renderer)
+    : InteractiveTabWidget(u8"заполнение"), renderer(renderer)
 {
     ui.setupUi(this);
 
     // setup canvas
-    canvas = new SmartCanvas(regionWrapper);
+    canvas = new SmartCanvas();
     ui.canvasGroup->layout()->addWidget(canvas);
 
-    hidePointEditor();
+    // hidePointEditor();
 
     // canvas
-    connect(canvas, &SmartCanvas::selectionChanged, this, &FillerTab::selectionChangedSlot);
+    // connect(canvas, &SmartCanvas::selectionChanged, this, &FillerTab::selectionChangedSlot);
 
     // special point handling
     connect(ui.selectFillPointButton, &QPushButton::clicked, canvas, &SmartCanvas::specialPointSelectAction);
@@ -31,16 +31,18 @@ FillerTab::FillerTab(RegionRenderer* renderer)
     connect(ui.fillYInput, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, [&](int y) { canvas->changeSpecialPointPos(ui.fillXInput->value(), y); });
 
     // checkboxes
-    connect(ui.constraintCheckBox, &QCheckBox::toggled, this, &FillerTab::constraintToggled);
-    connect(ui.linesCheckBox, &QCheckBox::toggled, this, &FillerTab::lineToggled);
+    // connect(ui.constraintCheckBox, &QCheckBox::toggled, this, &FillerTab::constraintToggled);
+    // connect(ui.linesCheckBox, &QCheckBox::toggled, this, &FillerTab::lineToggled);
 
-    connect(canvas, &SmartCanvas::constraintToggled, ui.constraintCheckBox, &QCheckBox::setChecked);
-    connect(canvas, &SmartCanvas::lineToggled, ui.linesCheckBox, &QCheckBox::setChecked);
+    // connect(canvas, &SmartCanvas::constraintToggled, ui.constraintCheckBox, &QCheckBox::setChecked);
+    // connect(canvas, &SmartCanvas::lineToggled, ui.linesCheckBox, &QCheckBox::setChecked);
 
     // color picker
     colorPicker = new ColorPickerWidget;
     colorPicker->setColor(Qt::green);
     ui.colorForm->setWidget(0, QFormLayout::ItemRole::FieldRole, colorPicker);
+    connect(colorPicker, &ColorPickerWidget::colorChanged, this, &FillerTab::colorPicked);
+    colorPicked(colorPicker->getColor());
 
     // buttons
     connect(ui.fillButton, &QPushButton::clicked, this, &FillerTab::fillButtonPressed);
@@ -50,33 +52,10 @@ FillerTab::FillerTab(RegionRenderer* renderer)
     connect(ui.clearButton, &QPushButton::clicked, this, &FillerTab::clearButtonPressed);
 }
 
-void FillerTab::selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint)
-{
-    if (!newPoint)
-        hidePointEditor();
-    else
-    {
-        selectedPointWrapper.wrap(*newPoint);
-        connect(&selectedPointWrapper, &PointWrapper::modified, canvas, &SmartCanvas::regionModified);
-
-        showPointEditor();
-    }
-}
-
 void FillerTab::specialPointChanged(int x, int y)
 {
     ui.fillXInput->setValue(x);
     ui.fillYInput->setValue(y);
-}
-
-void FillerTab::constraintToggled(bool checked)
-{
-    canvas->setConstraintEnabled(checked);
-}
-
-void FillerTab::lineToggled(bool checked)
-{
-    canvas->setLineEnabled(checked);
 }
 
 void FillerTab::fillButtonPressed()
@@ -97,14 +76,13 @@ void FillerTab::fillStepButtonPressed()
 
 void FillerTab::clearButtonPressed()
 {
+    canvas->clearRegion();
     canvas->clearCanvas();
-    regionWrapper->clear();
 }
 
 void ui::FillerTab::removeRegionButtonPressed()
 {
-    canvas->deselect();
-    region.clear();
+    canvas->clearRegion();
     canvas->update();
 }
 
@@ -113,21 +91,7 @@ void ui::FillerTab::clearOverlayButtonPressed()
     canvas->clearOverlay();
 }
 
-void FillerTab::showPointEditor()
+void ui::FillerTab::colorPicked(QColor color)
 {
-    ui.pointEditorGroup->show();
-
-    ui.xInput->disconnect();
-    ui.yInput->disconnect();
-
-    ui.xInput->setValue((*selectedPointWrapper).x);
-    ui.yInput->setValue((*selectedPointWrapper).y);
-
-    connect(ui.xInput, (void (QSpinBox::*)(int))&QSpinBox::valueChanged, &selectedPointWrapper, &PointWrapper::setX);
-    connect(ui.yInput, (void (QSpinBox::*)(int))&QSpinBox::valueChanged, &selectedPointWrapper, &PointWrapper::setY);
-}
-
-void FillerTab::hidePointEditor()
-{
-    ui.pointEditorGroup->hide();
+    canvas->setColor(color);
 }

@@ -8,17 +8,12 @@
 using namespace core;
 using namespace ui;
 
-SmartCanvas::SmartCanvas(BasicRegionWrapper& region)
-    : region(region), pointConstrainter(region), pointSelector(region), lineConnector(region)
+SmartCanvas::SmartCanvas()
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setMouseTracking(true);
-    pointConstrainter.disable();
-    lineConnector.disable();
-
-    connect(&pointSelector, &PointSelector::selectionChanged, this, &SmartCanvas::selectionChangedSlot);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &SmartCanvas::rendererLoop);
@@ -32,14 +27,8 @@ SmartCanvas::~SmartCanvas()
         delete asyncRenderer;
 }
 
-void SmartCanvas::regionModified()
-{
-    update();
-}
-
 void SmartCanvas::specialPointSelectAction()
 {
-    deselect();
     specialPointSelectingState = true;
 }
 
@@ -47,17 +36,15 @@ void SmartCanvas::keyPressEvent(QKeyEvent* event)
 {
     switch (event->key())
     {
-    case Qt::Key_G: pointConstrainter.toggle(); emit constraintToggled(pointConstrainter.isEnabled()); break;
-    case Qt::Key_L: lineConnector.toggle(); emit lineToggled(lineConnector.isEnabled()); break;
     default: break;
     }
 }
 
 void SmartCanvas::fillRegion(core::BucFillRenderer& renderer, const QColor& color)
 {
-    core::LibSegmentRenderer segren;
-    for (const auto line : region->getLines())
-        segren.draw(fillOverlay, line, color);
+    QPainter painter(&fillOverlay);
+    drawRegion(painter);
+
     renderer.fill(fillOverlay, specialPointPos, color);
 }
 
@@ -68,9 +55,8 @@ void SmartCanvas::fillRegionWithStep(core::AsyncBucFillRenderer* renderer, const
     if (asyncRenderer)
         delete asyncRenderer;
 
-    core::LibSegmentRenderer segren;
-    for (const auto line : region->getLines())
-        segren.draw(fillOverlay, line, color);
+    QPainter painter(&fillOverlay);
+    drawRegion(painter);
 
     asyncRenderer = renderer;
     asyncRenderer->beginFill();
@@ -82,7 +68,6 @@ void SmartCanvas::clearCanvas()
 {
     timer->stop();
 
-    pointSelector.deselectPoint();
     getImage().fill(Qt::white);
     fillOverlay.fill(Qt::white);
 
@@ -95,24 +80,18 @@ void SmartCanvas::clearCanvas()
     update();
 }
 
+void ui::SmartCanvas::clearRegion()
+{
+    region.clear();
+    update();
+}
+
 void ui::SmartCanvas::clearOverlay()
 {
     timer->stop();
 
     fillOverlay.fill(Qt::white);
     update();
-}
-
-void SmartCanvas::setConstraintEnabled(bool enabled)
-{
-    if (enabled ^ pointConstrainter.isEnabled())
-        pointConstrainter.toggle();
-}
-
-void SmartCanvas::setLineEnabled(bool enabled)
-{
-    if (enabled ^ lineConnector.isEnabled())
-        lineConnector.toggle();
 }
 
 void SmartCanvas::changeSpecialPointPos(int x, int y)
@@ -127,10 +106,12 @@ void SmartCanvas::changeSpecialPointPos(int x, int y)
 void SmartCanvas::mouseMoveEvent(QMouseEvent* event)
 {
     mousePos = event->pos();
-    mousePos = pointConstrainter.constraint(mousePos);
 
     if (specialPointSelectingState)
         changeSpecialPointPos(mousePos.x(), mousePos.y());
+
+    else if (mousePressed)
+        region.back().push_back(mousePos);
 
     update();
 }
@@ -142,7 +123,7 @@ void SmartCanvas::mousePressEvent(QMouseEvent* event)
         if (specialPointSelectingState)
             specialPointSelectingState = false;
         else
-            pointSelector.selectPoint(mousePos.x(), mousePos.y());
+            region.push_back({ event->pos() });
     }
     else if (event->button() == Qt::MouseButton::RightButton)
     {
@@ -151,19 +132,17 @@ void SmartCanvas::mousePressEvent(QMouseEvent* event)
             changeSpecialPointPos(0, 0);
             specialPointSelectingState = false;
         }
-        else if (QApplication::queryKeyboardModifiers().testFlag(Qt::KeyboardModifier::AltModifier))
-        {
-            if (!pointSelector.removePointAt(mousePos.x(), mousePos.y()))
-                lineConnector.removeLineAt(mousePos.x(), mousePos.y());
-        }
-        else
-        {
-            region.appendPoint(mousePos.x(), mousePos.y());
-            pointSelector.selectPoint(mousePos.x(), mousePos.y());
-        }
     }
 
+    mousePressed = true;
     update();
+}
+
+void SmartCanvas::mouseReleaseEvent(QMouseEvent* event)
+{
+    mousePressed = false;
+    if (region.size() > 0)
+        region.back().push_back(region.back().front());
 }
 
 void ui::SmartCanvas::resizeEvent(QResizeEvent* event)
@@ -190,9 +169,10 @@ void ui::SmartCanvas::rendererLoop()
         }
         else
         {
-            asyncRenderer->asyncFill(fillOverlay, specialPointPos, color);
+            for (int i = 0; i < 5 && !asyncRenderer->isFinished(); i++)
+                asyncRenderer->asyncFill(fillOverlay, specialPointPos, color);
             repaint();
-            
+
             if (asyncRenderer->isFinished())
             {
                 delete asyncRenderer;
@@ -201,12 +181,6 @@ void ui::SmartCanvas::rendererLoop()
             }
         }
     }
-}
-
-void SmartCanvas::selectionChangedSlot(core::BasicRegion::Point* oldPoint, core::BasicRegion::Point* newPoint)
-{
-    lineConnector.selectionChanged(oldPoint, newPoint);
-    emit selectionChanged(oldPoint, newPoint);
 }
 
 void SmartCanvas::repaintCanvas()
@@ -219,30 +193,30 @@ void SmartCanvas::repaintCanvas()
 
     drawAxes(painter);
     drawRegion(painter);
-
-    pointSelector.drawSelection(painter);
-    lineConnector.drawHelpers(painter, mousePos);
-
     drawSpecialPoint(painter);
 
     if (mouseEntered)
-    {
-        pointConstrainter.drawConstraints(painter, mousePos);
         drawCursor(painter);
-    }
 
     repaint();
 }
 
 void SmartCanvas::drawRegion(QPainter& painter)
 {
-    painter.setPen(Qt::black);
+    for (const auto& contour : region)
+    {
+        if (contour.size() > 1)
+        {
+            painter.setPen(color);
 
-    for (const auto& line : region->getLines())
-        painter.drawLine(line.p1->x, line.p1->y, line.p2->x, line.p2->y);
-
-    for (const auto& point : region->getPoints())
-        painter.drawEllipse(QPoint(point.x, point.y), 2, 2);
+            auto first = contour.begin();
+            for (auto second = contour.begin(); ++second != contour.end();)
+            {
+                painter.drawLine(*first, *second);
+                first = second;
+            }
+        }
+    }
 }
 
 void SmartCanvas::drawCursor(QPainter& painter)
@@ -287,9 +261,9 @@ void SmartCanvas::drawSpecialPoint(QPainter& painter)
     int x = specialPointPos.x();
     int y = specialPointPos.y();
 
-    int padding = 2;
-    int radius = 4;
-    int margin = 3;
+    constexpr int padding = 2;
+    constexpr int radius = 4;
+    constexpr int margin = 3;
 
     painter.setPen(Qt::blue);
 
