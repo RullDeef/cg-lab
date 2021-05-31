@@ -20,6 +20,7 @@ namespace ui
 
     public slots:
         void constraintToggled(bool checked);
+        void cutterSelected(core::Rect& rect);
 
         void clearButtonPressed();
         void removeSegmentsButtonPressed();

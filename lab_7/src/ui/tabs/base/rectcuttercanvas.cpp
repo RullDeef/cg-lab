@@ -155,7 +155,7 @@ void ui::RectCutterCanvas::drawCutter(QPainter& painter)
 
 void ui::RectCutterCanvas::drawLines(QPainter& painter)
 {
-    painter.setPen(QPen(Qt::cyan, 1));
+    painter.setPen(QPen(Qt::blue, 1));
     for (const auto& line : lines)
         painter.drawLine(line.x1, line.y1, line.x2, line.y2);
     painter.drawLine(tempLine.x1, tempLine.y1, tempLine.x2, tempLine.y2);
