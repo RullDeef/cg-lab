@@ -27,6 +27,8 @@ FillerTab::FillerTab(AsyncBucFillRenderer* renderer)
     // special point handling
     connect(ui.selectFillPointButton, &QPushButton::clicked, canvas, &SmartCanvas::specialPointSelectAction);
     connect(canvas, &SmartCanvas::specialPointPosChanged, this, &FillerTab::specialPointChanged);
+    connect(ui.addPointButton, &QPushButton::clicked, this, &FillerTab::addContourPoint);
+    connect(ui.closeButton, &QPushButton::clicked, canvas, &SmartCanvas::closeContour);
     connect(ui.fillXInput, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, [&](int x) { canvas->changeSpecialPointPos(x, ui.fillYInput->value()); });
     connect(ui.fillYInput, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, [&](int y) { canvas->changeSpecialPointPos(ui.fillXInput->value(), y); });
 
@@ -56,6 +58,14 @@ void FillerTab::specialPointChanged(int x, int y)
 {
     ui.fillXInput->setValue(x);
     ui.fillYInput->setValue(y);
+}
+
+void ui::FillerTab::addContourPoint()
+{
+    int x = ui.xInput->value();
+    int y = ui.yInput->value();
+
+    canvas->addContourPoint(x, y);
 }
 
 void FillerTab::fillButtonPressed()

@@ -94,6 +94,15 @@ void ui::SmartCanvas::clearOverlay()
     update();
 }
 
+void ui::SmartCanvas::addContourPoint(int x, int y)
+{
+    if (region.empty())
+        region.push_back({});
+
+    region.back().push_back(QPoint(x, y));
+    update();
+}
+
 void SmartCanvas::changeSpecialPointPos(int x, int y)
 {
     if (specialPointPos != QPoint(x, y))
@@ -101,6 +110,12 @@ void SmartCanvas::changeSpecialPointPos(int x, int y)
         specialPointPos = QPoint(x, y);
         emit specialPointPosChanged(x, y);
     }
+}
+
+void ui::SmartCanvas::closeContour()
+{
+    region.back().push_back(region.back().front());
+    region.push_back({});
 }
 
 void SmartCanvas::mouseMoveEvent(QMouseEvent* event)

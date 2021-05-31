@@ -20,6 +20,7 @@ namespace ui
 
     public slots:
         void specialPointChanged(int x, int y);
+        void addContourPoint();
 
         void fillButtonPressed();
         void fillStepButtonPressed();

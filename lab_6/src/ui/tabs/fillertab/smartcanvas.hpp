@@ -25,6 +25,7 @@ namespace ui
         void clearRegion();
         void clearOverlay();
 
+        void addContourPoint(int x, int y);
         void changeSpecialPointPos(int x, int y);
 
     signals:
@@ -32,6 +33,7 @@ namespace ui
 
     public slots:
         void specialPointSelectAction();
+        void closeContour();
 
     protected slots:
         virtual void keyPressEvent(QKeyEvent* event) override;
