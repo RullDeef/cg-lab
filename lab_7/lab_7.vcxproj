@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8DCC30B1-C108-415B-8E27-07F46BCC2601}</ProjectGuid>
+    <Keyword>QtVS_v304</Keyword>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.18362.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
+    <QtInstall>5.15.2_msvc2019_64</QtInstall>
+    <QtModules>charts;widgets</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
+    <QtInstall>5.15.2_msvc2019_64</QtInstall>
+    <QtModules>charts;widgets</QtModules>
+    <QtBuildConfig>release</QtBuildConfig>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
+    <ClCompile>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
+    <ClCompile>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\circle\brescirren.cpp" />
+    <ClCompile Include="src\core\circle\canoncirren.cpp" />
+    <ClCompile Include="src\core\circle\libcirren.cpp" />
+    <ClCompile Include="src\core\circle\mediancirren.cpp" />
+    <ClCompile Include="src\core\circle\paramcirren.cpp" />
+    <ClCompile Include="src\core\cutter\coencutter.cpp" />
+    <ClCompile Include="src\core\cutter\simplecutter.cpp" />
+    <ClCompile Include="src\core\ellipse\bresellren.cpp" />
+    <ClCompile Include="src\core\ellipse\canonellren.cpp" />
+    <ClCompile Include="src\core\ellipse\libellren.cpp" />
+    <ClCompile Include="src\core\ellipse\medianellren.cpp" />
+    <ClCompile Include="src\core\ellipse\paramellren.cpp" />
+    <ClCompile Include="src\core\fill\boundregionrenderer.cpp" />
+    <ClCompile Include="src\core\fill\bucfillregionrenderer.cpp" />
+    <ClCompile Include="src\core\line\bresintsegren.cpp" />
+    <ClCompile Include="src\core\line\bresrealsegren.cpp" />
+    <ClCompile Include="src\core\line\bressmoothsegren.cpp" />
+    <ClCompile Include="src\core\line\ddasegren.cpp" />
+    <ClCompile Include="src\core\line\librarysegren.cpp" />
+    <ClCompile Include="src\core\line\wusegren.cpp" />
+    <ClCompile Include="src\core\regionrenderer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ui\mainwindow.cpp" />
+    <ClCompile Include="src\ui\tabs\base\canvastabwidget.cpp" />
+    <ClCompile Include="src\ui\tabs\base\charttabwidget.cpp" />
+    <ClCompile Include="src\ui\tabs\base\interactivetabwidget.cpp" />
+    <ClCompile Include="src\ui\tabs\base\rectcuttercanvas.cpp" />
+    <ClCompile Include="src\ui\tabs\cuttertab.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
+    <ClCompile Include="src\ui\tabs\fillertab.cpp" />
+    <ClCompile Include="src\ui\tabs\base\canvas.cpp" />
+    <ClCompile Include="src\ui\tabs\base\lineconnector.cpp" />
+    <ClCompile Include="src\ui\tabs\base\pointconstrainter.cpp" />
+    <ClCompile Include="src\ui\tabs\base\pointselector.cpp" />
+    <ClCompile Include="src\ui\tabs\base\smartcanvas.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="src\ui\mainwindow.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="src\ui\mainwindow.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="src\ui\mainwindow.ui" />
+    <QtUic Include="src\ui\tabs\base\canvastabwidget.ui" />
+    <QtUic Include="src\ui\tabs\base\charttabwidget.ui" />
+    <QtUic Include="src\ui\tabs\cuttertab.ui" />
+    <QtUic Include="src\ui\tabs\fillertab.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\basecutter.hpp" />
+    <ClInclude Include="src\core\circle\brescirren.hpp" />
+    <ClInclude Include="src\core\circle\canoncirren.hpp" />
+    <ClInclude Include="src\core\circle\libcirren.hpp" />
+    <ClInclude Include="src\core\circle\mediancirren.hpp" />
+    <ClInclude Include="src\core\circle\paramcirren.hpp" />
+    <ClInclude Include="src\core\cutter\coencutter.hpp" />
+    <ClInclude Include="src\core\cutter\simplecutter.hpp" />
+    <ClInclude Include="src\core\ellipse\bresellren.hpp" />
+    <ClInclude Include="src\core\ellipse\canonellren.hpp" />
+    <ClInclude Include="src\core\ellipse\libellren.hpp" />
+    <ClInclude Include="src\core\ellipse\medianellren.hpp" />
+    <ClInclude Include="src\core\ellipse\paramellren.hpp" />
+    <ClInclude Include="src\core\fill\boundregionrenderer.hpp" />
+    <ClInclude Include="src\core\fill\bucfillregionrenderer.hpp" />
+    <ClInclude Include="src\core\line\bresintsegren.hpp" />
+    <ClInclude Include="src\core\line\bresrealsegren.hpp" />
+    <ClInclude Include="src\core\line\bressmoothsegren.hpp" />
+    <ClInclude Include="src\core\line\ddasegren.hpp" />
+    <ClInclude Include="src\core\line\librarysegren.hpp" />
+    <ClInclude Include="src\core\line\wusegren.hpp" />
+    <ClInclude Include="src\core\primitiverenderer.hpp" />
+    <ClInclude Include="src\core\regionrenderer.hpp" />
+    <ClInclude Include="src\core\rendererscollection.hpp" />
+    <QtMoc Include="src\ui\tabs\base\rectcuttercanvas.hpp" />
+    <QtMoc Include="src\ui\tabs\base\charttabwidget.hpp" />
+    <QtMoc Include="src\ui\tabs\base\canvastabwidget.hpp" />
+    <ClInclude Include="src\ui\tabs\base\interactivetabwidget.hpp" />
+    <QtMoc Include="src\ui\tabs\fillertab.hpp" />
+    <QtMoc Include="src\ui\tabs\cuttertab.hpp" />
+    <ClInclude Include="src\ui\tabs\base\pointconstrainter.hpp" />
+    <QtMoc Include="src\ui\tabs\base\smartcanvas.hpp" />
+    <QtMoc Include="src\ui\tabs\base\pointselector.hpp" />
+    <QtMoc Include="src\ui\tabs\base\lineconnector.hpp" />
+    <QtMoc Include="src\ui\tabs\base\colorpickerwidget.hpp" />
+    <QtMoc Include="src\ui\tabs\base\canvas.hpp" />
+    <QtMoc Include="src\ui\tabs\base\basicregionwrapper.hpp" />
+    <QtMoc Include="src\ui\tabs\base\widgetoptions.hpp" />
+    <QtMoc Include="src\ui\tabs\base\tabblocks.hpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
