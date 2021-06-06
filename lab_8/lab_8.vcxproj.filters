@@ -8,6 +8,7 @@
     <ClCompile Include="src\ui\tabs\base\canvas.cpp" />
     <ClCompile Include="src\core\regionrenderer.cpp" />
     <ClCompile Include="src\core\cutter\cyrusbeckcutter.cpp" />
+    <ClCompile Include="src\ui\tabs\base\cutterconstrainter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\ui\mainwindow.hpp" />
@@ -26,5 +27,6 @@
     <ClInclude Include="src\core\basecutter.hpp" />
     <ClInclude Include="src\core\regionrenderer.hpp" />
     <ClInclude Include="src\core\cutter\cyrusbeckcutter.hpp" />
+    <ClInclude Include="src\ui\tabs\base\cutterconstrainter.hpp" />
   </ItemGroup>
 </Project>

@@ -16,6 +16,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ui\mainwindow.cpp" />
     <ClCompile Include="src\ui\tabs\base\canvas.cpp" />
+    <ClCompile Include="src\ui\tabs\base\cutterconstrainter.cpp" />
     <ClCompile Include="src\ui\tabs\base\rectcuttercanvas.cpp" />
     <ClCompile Include="src\ui\tabs\cuttertab.cpp" />
   </ItemGroup>
@@ -42,6 +43,7 @@
     <ClInclude Include="src\core\basecutter.hpp" />
     <ClInclude Include="src\core\cutter\cyrusbeckcutter.hpp" />
     <ClInclude Include="src\core\regionrenderer.hpp" />
+    <ClInclude Include="src\ui\tabs\base\cutterconstrainter.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A8FD9F16-7A44-4173-9476-4DD7E2EFB33D}</ProjectGuid>

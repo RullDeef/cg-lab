@@ -61,7 +61,8 @@ namespace core
         bool operator==(const Line& line) const;
         bool operator!=(const Line& line) const;
 
-        bool closeTo(int x, int y, double offset) const;
+        bool closeTo(double x, double y, double offset) const;
+        double getDistance(double x, double y) const;
         double cross(const Line& line) const;
     };
 

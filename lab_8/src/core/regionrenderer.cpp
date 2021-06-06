@@ -174,10 +174,13 @@ bool core::Line::operator!=(const Line& line) const
     return (*p1 != *(line.p1) || *p2 != *(line.p2)) && (*p1 != *(line.p2) || *p2 != *(line.p1));
 }
 
-bool core::Line::closeTo(int x, int y, double offset) const
+bool core::Line::closeTo(double x, double y, double offset) const
 {
-    double distance = 0;
+    return getDistance(x, y) < offset;
+}
 
+double core::Line::getDistance(double x, double y) const
+{
     double v_x = p2->x - p1->x;
     double v_y = p2->y - p1->y;
 
@@ -188,15 +191,13 @@ bool core::Line::closeTo(int x, int y, double offset) const
     double w2_y = p2->y - y;
 
     if (w1_x * v_x + w1_y * v_y >= 0)
-        distance = p1->distance(x, y);
+        return p1->distance(x, y);
 
     else if (w2_x * v_x + w2_y * v_y <= 0)
-        distance = p2->distance(x, y);
+        return p2->distance(x, y);
 
     else
-        distance = abs(w1_x * w2_y - w2_x * w1_y) / p1->distance(*p2);
-
-    return distance < offset;
+        return abs(w1_x * w2_y - w2_x * w1_y) / p1->distance(*p2);
 }
 
 double core::Line::cross(const Line& line) const

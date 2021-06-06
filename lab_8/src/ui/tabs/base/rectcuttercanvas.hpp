@@ -49,6 +49,7 @@ namespace ui
         void drawCutter(QPainter& painter);
         void drawLines(QPainter& painter);
         void drawCursor(QPainter& painter);
+        void drawConstraints(QPainter& painter);
 
     private:
         QPoint mousePos;
@@ -61,6 +62,7 @@ namespace ui
         core::BasicRegion cutter;
         core::Point* lastPoint = nullptr;
 
+        core::Point startPoint;
         core::Segment tempLine;
         std::list<core::Segment> lines;
         std::list<core::Segment> linesCutted;

@@ -1,6 +1,8 @@
 #include "core/cutter/cyrusbeckcutter.hpp"
 #include "rectcuttercanvas.hpp"
+#include "cutterconstrainter.hpp"
 #include <QMouseEvent>
+
 
 ui::RectCutterCanvas::RectCutterCanvas()
 {
@@ -48,6 +50,9 @@ void ui::RectCutterCanvas::beginLine(int x, int y)
 {
     tempLine.x1 = tempLine.x2 = x;
     tempLine.y1 = tempLine.y2 = y;
+
+    startPoint.x = x;
+    startPoint.y = y;
 }
 
 void ui::RectCutterCanvas::continueLine(int x, int y)
@@ -64,6 +69,9 @@ void ui::RectCutterCanvas::endLine()
     tempLine.y1 = 0;
     tempLine.x2 = 0;
     tempLine.y2 = 0;
+
+    startPoint.x = 0;
+    startPoint.y = 0;
 }
 
 void ui::RectCutterCanvas::normalizeCutter()
@@ -159,8 +167,12 @@ void ui::RectCutterCanvas::mouseMoveEvent(QMouseEvent* event)
     }
     else if (drawingLine)
     {
-        tempLine.x2 = event->pos().x();
-        tempLine.y2 = event->pos().y();
+        core::Point p(event->pos().x(), event->pos().y());
+        if (event->modifiers() & Qt::ShiftModifier)
+            p = CutterConstrainter(startPoint).constraint(p, cutter);
+
+        tempLine.x2 = p.x;
+        tempLine.y2 = p.y;
     }
 
     repaint();
@@ -186,10 +198,16 @@ void ui::RectCutterCanvas::repaintCanvas()
 
     drawAxes(painter);
     drawCutter(painter);
-    drawLines(painter);
 
     if (mouseEntered)
+    {
         drawCursor(painter);
+
+        if (drawingLine)
+            drawConstraints(painter);
+    }
+
+    drawLines(painter);
 
     repaint();
 }
@@ -230,4 +248,10 @@ void ui::RectCutterCanvas::drawCursor(QPainter& painter)
     painter.drawLine(x, y + padding, x, y + radius + margin);
     painter.drawLine(x - padding, y, x - radius - margin, y);
     painter.drawLine(x + padding, y, x + radius + margin, y);
+}
+
+void ui::RectCutterCanvas::drawConstraints(QPainter& painter)
+{
+    core::Point p(tempLine.x2, tempLine.y2);
+    CutterConstrainter(startPoint).drawConstraints(painter, p, cutter);
 }
