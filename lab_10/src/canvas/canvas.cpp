@@ -5,23 +5,34 @@
 
 
 Canvas::Canvas()
-    : renderTarget(QImage(100, 100, QImage::Format::Format_ARGB32))
+    : renderTarget(QImage(100, 100, QImage::Format::Format_ARGB32)), floatingHorizont(1)
 {
     renderTarget.fill(Qt::transparent);
+    floatingHorizont.setStep(10);
 }
 
-void Canvas::drawSurface(F_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ)
+void Canvas::drawSurface(Y_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ)
 {
     QPainter painter(&renderTarget);
 
-    constexpr long npx = 5 * 80, npz = 80;
+    size_t npx = floatingHorizont.getWidth(), npz = 60;
+    double npy = height() / (endY - startY);
 
-    double dxi = double(endX - startX) / (npx - 1);
-    double dzj = double(endZ - startZ) / (npz - 1);
-    double dxp = double(width()) / npx;
+    double dx = (endX - startX) / (npx - 1);
+    double dz = (endZ - startZ) / (npz - 1);
 
-    double m = height() / (endY - startY);
+    auto func = [=](int x, int z) -> int {
+        double xf = startX + x * dx;
+        double zf = startZ + z * dz;
+        double yf = surface(xf, zf);
 
+        int y = (yf - startY) / (endY - startY) * height();
+        return y;
+    };
+
+    floatingHorizont.draw(painter, func, npz, 0);
+    
+    /*
     double* upperHorizont = new double[npx];
     double* lowerHorizont = new double[npx];
 
@@ -30,7 +41,6 @@ void Canvas::drawSurface(F_t surface, double startX, double endX, double startY,
         upperHorizont[i] = -1.0;
         lowerHorizont[i] = height() + 1.0;
     }
-
     for (int j = 0; j < npz; j++)
     {
         double zj = startZ + j * dzj;
@@ -71,9 +81,9 @@ void Canvas::drawSurface(F_t surface, double startX, double endX, double startY,
             xi += dxi;
         }
     }
-
     delete[] upperHorizont;
     delete[] lowerHorizont;
+    */
 }
 
 void Canvas::clear()
@@ -101,5 +111,6 @@ void Canvas::resizeEvent(QResizeEvent* event)
         painter.drawImage(0, 0, oldRenderTarget);
     }
 
+    floatingHorizont.setWidth(size.width());
     update();
 }

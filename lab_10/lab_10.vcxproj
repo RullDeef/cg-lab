@@ -94,11 +94,15 @@
     <QtUic Include="forms\mainwindow.ui" />
     <QtMoc Include="src\mainwindow.hpp" />
     <ClCompile Include="src\canvas\canvas.cpp" />
+    <ClCompile Include="src\canvas\FloatingHorizon\floatinghorizon.cpp" />
     <ClCompile Include="src\mainwindow.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\canvas\canvas.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\canvas\FloatingHorizon\floatinghorizon.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

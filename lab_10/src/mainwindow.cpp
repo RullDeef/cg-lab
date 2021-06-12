@@ -26,10 +26,12 @@ void MainWindow::redrawSurface()
 
     double time = double(std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now().time_since_epoch()).count()) / 30000;
-    canvas->drawSurface([time](double x, double y, double z) {
+    canvas->drawSurface([time](double x, double z) {
         double rx = x * std::cos(time) - z * std::sin(time);
         double rz = x * std::sin(time) + z * std::cos(time);
 
+        //return rx * rx - rz * rz;
         return 0.2 * std::hypot(x, z) * std::sin(16 * std::atan(rx / rz)) + 0.3 * z;
+
     }, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 }

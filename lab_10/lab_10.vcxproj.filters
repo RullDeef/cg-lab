@@ -32,6 +32,9 @@
     <ClCompile Include="src\canvas\canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\canvas\FloatingHorizon\floatinghorizon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\mainwindow.hpp">
@@ -50,5 +53,10 @@
     <QtRcc Include="forms\mainwindow.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\canvas\FloatingHorizon\floatinghorizon.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,9 +2,8 @@
 
 #include <QWidget>
 #include <QImage>
-#include <functional>
+#include "floatinghorizon/floatinghorizon.hpp"
 
-using F_t = std::function<double(double,double,double)>;
 
 class Canvas : public QWidget
 {
@@ -14,7 +13,7 @@ public:
     Canvas();
     virtual ~Canvas() = default;
 
-    virtual void drawSurface(F_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ);
+    virtual void drawSurface(Y_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ);
     virtual void clear();
 
 protected slots:
@@ -23,4 +22,6 @@ protected slots:
 
 private:
     QImage renderTarget;
+
+    FloatingHorizon floatingHorizont;
 };
