@@ -29,6 +29,7 @@ namespace ui
         void applyCut();
         void clearCut();
         void selectCutter();
+        void removeCutter();
         void addRegion();
 
     protected slots:

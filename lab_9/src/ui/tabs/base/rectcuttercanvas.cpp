@@ -41,6 +41,14 @@ void ui::RectCutterCanvas::selectCutter()
     selectingCutter = true;
 }
 
+void ui::RectCutterCanvas::removeCutter()
+{
+    cutterBuilder.reset();
+    cutter.clear();
+
+    update();
+}
+
 void ui::RectCutterCanvas::addRegion()
 {
     selectingContour = true;

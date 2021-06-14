@@ -195,6 +195,15 @@ static void normalizeContours(std::list<std::list<Line>>& contours)
     }
 }
 
+static void sortContours(std::list<std::list<Line>>& contours)
+{
+    std::vector<std::list<Line>> conts(contours.begin(), contours.end());
+    std::sort(conts.begin(), conts.end(), [](const std::list<Line>& c1, const std::list<Line>& c2) {
+        return isInside(c2, c1);
+    });
+    contours = std::list(conts.begin(), conts.end());
+}
+
 std::list<std::list<Line>> core::BasicRegion::getContours() const
 {
     std::list<std::list<Line>> contours;
@@ -216,6 +225,7 @@ std::list<std::list<Line>> core::BasicRegion::getContours() const
     }
 
     normalizeContours(contours);
+    sortContours(contours);
     return contours;
 }
 

@@ -23,6 +23,7 @@ CutterTab::CutterTab()
     connect(canvas, &RectCutterCanvas::cutterSelected, this, &CutterTab::cutterSelected);
     connect(ui.removeRegionButton, &QPushButton::pressed, this, &CutterTab::removeRegionButtonPressed);
     connect(ui.clearButton, &QPushButton::pressed, canvas, &RectCutterCanvas::clearCut);
+    connect(ui.deleteCutterButton, &QPushButton::pressed, canvas, &RectCutterCanvas::removeCutter);
 }
 
 void ui::CutterTab::removeRegionButtonPressed()

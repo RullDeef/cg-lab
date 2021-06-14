@@ -9,6 +9,7 @@ struct WeilerVertex
     double y = 0.0;
     bool inside = false;
     bool intersectionPoint = false;
+    bool visited = false;
 
     WeilerVertex* prev = nullptr;
     WeilerVertex* next = nullptr;
@@ -62,6 +63,17 @@ static std::list<Point> expandContour(const std::list<Line>& contour)
     for (const auto& line : contour)
         points.push_back(*line.p1);
     return points;
+}
+
+static std::list<Point> contourFromVertexList(WeilerVertex* contour)
+{
+    std::list<Point> result;
+
+    size_t i = 0;
+    for (auto node = contour; i == 0 || node != contour; i++, node = node->next)
+        result.push_back(Point(node->x, node->y));
+
+    return result;
 }
 
 static bool checkForIntersection(WeilerVertex* node1, WeilerVertex* node2)
@@ -129,6 +141,15 @@ static void intersectVertexLists(WeilerVertex* list1, WeilerVertex* list2)
     }
 }
 
+static bool hasIntersectionPoints(WeilerVertex* contour)
+{
+    size_t i = 0;
+    for (WeilerVertex* node = contour; i == 0 || node != contour; i++, node = node->next)
+        if (node->intersectionPoint)
+            return true;
+    return false;
+}
+
 static std::list<WeilerVertex*> getInputPoints(WeilerVertex* contour)
 {
     std::list<WeilerVertex*> result;
@@ -165,7 +186,23 @@ static bool isInside(const std::list<Point>& inner, const std::list<Point>& oute
         }
     }
 
-    return (sum < 0.0) ^ (count % 2 == 1);
+    return /* (sum < 0.0) ^ */ (count % 2 == 1);
+}
+
+static bool isOuterContour(const std::list<Point>& contour)
+{
+    double sum = contour.back().x * contour.front().y - contour.front().x * contour.back().y;
+    for (auto p1 = contour.begin(), p2 = ++contour.begin(); p2 != contour.end(); p1++, p2++)
+        sum += p1->x * p2->y - p2->x * p1->y;
+    return sum > 0.0;
+}
+
+static std::list<Point> normalized(const std::list<Point>& contour)
+{
+    if (isOuterContour(contour))
+        return contour;
+
+    return std::list(contour.rbegin(), contour.rend());
 }
 
 std::list<std::list<Point>> cutContour(const std::list<Point>& contour, const std::list<Point>& cutter)
@@ -198,17 +235,70 @@ std::list<std::list<Point>> cutContour(const std::list<Point>& contour, const st
     }
     else
     {
+        bool contourOuter = isOuterContour(contour);
+        bool cutterOuter = isOuterContour(cutter);
+
         // 2 points test
         if (isInside(contour, cutter))
-            result.push_back(contour);
+        {
+            if (contourOuter && cutterOuter)
+                result.push_back(contour);
+            else if (!contourOuter && !cutterOuter)
+                result.push_back(cutter);
+            else if (!contourOuter && cutterOuter)
+            {
+                result.push_back(contour);
+                //result.push_back(cutter);
+            }
+        }
         else if (isInside(cutter, contour))
-            result.push_back(cutter);
+        {
+            if (contourOuter && cutterOuter)
+                result.push_back(cutter);
+            else if (!contourOuter && !cutterOuter)
+                result.push_back(contour);
+            else if (contourOuter && !cutterOuter)
+            {
+                result.push_back(contour);
+                result.push_back(cutter);
+            }
+        }
     }
 
     deleteVertexList(contourList);
     deleteVertexList(cutterList);
 
     return result;
+}
+
+static void filterInvertContours(std::list<std::list<Point>>& unstable, const std::list<Point>& region)
+{
+    unstable = std::list(unstable.begin(), std::remove_if(unstable.begin(), unstable.end(),
+        [&region](const std::list<Point>& c) -> bool {
+            return !isInside(c, region);
+        }));
+    // if (stable.size() == 0)
+    // {
+    // }
+    // else
+    // {
+    //     std::list<std::list<Point>> result;
+    // 
+    //     for (auto c1 = stable.begin(); c1 != stable.end(); c1++)
+    //     {
+    //         int count = 0;
+    //         for (auto c2 = stable.begin(); c2 != stable.end(); c2++)
+    //         {
+    //             if (c1 == c2)
+    //                 continue;
+    //             if ((isOuterContour(*c1) ^ isOuterContour(*c2)) && isInside(*c1, *c2))
+    //                 count++;
+    //         }
+    //         if ((count % 2 == 1) ^ isOuterContour(*c1))
+    //             result.push_back(*c1);
+    //     }
+    //     stable = result;
+    // }
 }
 
 BasicRegion transformToRegion(const std::list<std::list<Point>>& contours)
@@ -231,26 +321,77 @@ BasicRegion transformToRegion(const std::list<std::list<Point>>& contours)
 
 void core::WeilerAtherton::cut(BasicRegion& region, const BasicRegion& cutter)
 {
-    auto contours = region.getContours();
-    auto cutterContours = cutter.getContours();
+    std::list<WeilerVertex*> regionContours;
+    std::list<WeilerVertex*> cutterContours;
 
-    std::list<std::list<Point>> resultContours;
-    std::list<std::list<Point>> tempContours;
-    for (const auto& contour : contours)
-        resultContours.push_back(expandContour(contour));
+    for (const auto& contour : region.getContours())
+        regionContours.push_back(createVertexList(expandContour(contour)));
 
-    for (const auto& cutterContour : cutterContours)
+    for (const auto& contour : cutter.getContours())
+        cutterContours.push_back(createVertexList(expandContour(contour)));
+
+    for (auto& c1 : regionContours)
+        for (auto& c2 : cutterContours)
+            intersectVertexLists(c1, c2);
+
+    std::list<WeilerVertex*> inputPoints;
+    for (auto& contour : regionContours)
     {
-        auto expandedCutter = expandContour(cutterContour);
-        tempContours = resultContours;
-        resultContours = {};
+        auto points = getInputPoints(contour);
+        inputPoints.insert(inputPoints.end(), points.begin(), points.end());
+    }
 
-        for (const auto& cuttee : tempContours)
+    std::list<std::list<Point>> stableContours;
+
+    if (inputPoints.size() != 0)
+    {
+        for (const auto& inputPoint : inputPoints)
         {
-            auto cutResults = cutContour(cuttee, expandedCutter);
-            resultContours.insert(resultContours.end(), cutResults.begin(), cutResults.end());
+            if (inputPoint->visited)
+                continue;
+            inputPoint->visited = true;
+
+            std::list<Point> tempContour;
+            tempContour.push_back(Point(inputPoint->x, inputPoint->y));
+
+            for (WeilerVertex* node = inputPoint->next; node != inputPoint && node->alter != inputPoint; node = node->next)
+            {
+                if (node->intersectionPoint)
+                {
+                    node->visited = true;
+                    node = node->alter;
+                    node->visited = true;
+                }
+
+                tempContour.push_back(Point(node->x, node->y));
+            }
+
+            stableContours.push_back(tempContour);
         }
     }
 
-    region = transformToRegion(resultContours);
+    {
+        std::list<std::list<Point>> unstableContours;
+        for (auto& contour : regionContours)
+            if (!hasIntersectionPoints(contour))
+                unstableContours.push_back(contourFromVertexList(contour));
+        filterInvertContours(unstableContours, contourFromVertexList(cutterContours.front()));
+        stableContours.insert(stableContours.end(), unstableContours.begin(), unstableContours.end());
+    }
+
+    {
+        std::list<std::list<Point>> unstableContours;
+        for (auto& contour : cutterContours)
+            if (!hasIntersectionPoints(contour))
+                unstableContours.push_back(contourFromVertexList(contour));
+        filterInvertContours(unstableContours, contourFromVertexList(regionContours.front()));
+        stableContours.insert(stableContours.end(), unstableContours.begin(), unstableContours.end());
+    }
+
+    for (auto& contour : regionContours)
+        deleteVertexList(contour);
+    for (auto& contour : cutterContours)
+        deleteVertexList(contour);
+
+    region = transformToRegion(stableContours);
 }

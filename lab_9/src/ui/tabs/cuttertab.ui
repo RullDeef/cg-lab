@@ -74,8 +74,7 @@
          </font>
         </property>
         <property name="text">
-         <string>ЛКМ - добавление отрезков,
-добавление отсекателя</string>
+         <string>ЛКМ - добавление контуров</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>
@@ -107,6 +106,13 @@
        <widget class="QPushButton" name="selectCutter">
         <property name="text">
          <string>выбрать отсекатель</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="deleteCutterButton">
+        <property name="text">
+         <string>удалить отсекатель</string>
         </property>
        </widget>
       </item>
