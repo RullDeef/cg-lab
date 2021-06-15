@@ -5,17 +5,18 @@
 
 
 Canvas::Canvas()
-    : renderTarget(QImage(100, 100, QImage::Format::Format_ARGB32)), floatingHorizont(1)
+    : renderTarget(QImage(100, 100, QImage::Format::Format_ARGB32)), floatingHorizon(1)
 {
     renderTarget.fill(Qt::transparent);
-    floatingHorizont.setStep(10);
+    floatingHorizon.setStep(1);
 }
 
-void Canvas::drawSurface(Y_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ)
+/*
+void drawSurface(Y_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ)
 {
     QPainter painter(&renderTarget);
 
-    size_t npx = floatingHorizont.getWidth(), npz = 60;
+    size_t npx = floatingHorizon.getWidth(), npz = 60;
     double npy = height() / (endY - startY);
 
     double dx = (endX - startX) / (npx - 1);
@@ -30,9 +31,8 @@ void Canvas::drawSurface(Y_t surface, double startX, double endX, double startY,
         return y;
     };
 
-    floatingHorizont.draw(painter, func, npz, 0);
-    
-    /*
+    floatingHorizon.draw(painter, func, npz, 0);
+
     double* upperHorizont = new double[npx];
     double* lowerHorizont = new double[npx];
 
@@ -83,7 +83,46 @@ void Canvas::drawSurface(Y_t surface, double startX, double endX, double startY,
     }
     delete[] upperHorizont;
     delete[] lowerHorizont;
-    */
+}
+*/
+
+void Canvas::setSurface(Y_t function)
+{
+    //size_t npx = floatingHorizon.getWidth(), npz = 60;
+    //double npy = height() / (end.getY() - start.getY());
+
+    //double dx = (end.getX() - start.getX()) / (npx - 1);
+    //double dz = (end.getZ() - start.getZ()) / (npz - 1);
+
+    floatingHorizon.setSurface([=](double x, double z) {
+        //double xf = start.getX() + x * dx;
+        //double zf = start.getZ() + z * dz;
+        double yf = function(x, z);
+
+        return (yf - start.getY()) / (end.getY() - start.getY()) * height();
+    });
+}
+
+void Canvas::setViewport(double startX, double endX, double startY, double endY, double startZ, double endZ)
+{
+    start = Vector(startX, startY, startZ);
+    end = Vector(endX, endY, endZ);
+}
+
+void Canvas::setCounts(size_t xCount, size_t zCount)
+{
+    floatingHorizon.setViewport(start, end, xCount, zCount);
+}
+
+void Canvas::rotateView(double angleX, double angleY, double angleZ)
+{
+    floatingHorizon.rotateView(angleX, angleY, angleZ);
+}
+
+void Canvas::drawSurface()
+{
+    QPainter painter(&renderTarget);
+    floatingHorizon.draw(painter);
 }
 
 void Canvas::clear()
@@ -111,6 +150,6 @@ void Canvas::resizeEvent(QResizeEvent* event)
         painter.drawImage(0, 0, oldRenderTarget);
     }
 
-    floatingHorizont.setWidth(size.width());
+    floatingHorizon.setWidth(size.width());
     update();
 }

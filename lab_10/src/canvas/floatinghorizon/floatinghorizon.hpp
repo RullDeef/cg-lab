@@ -2,10 +2,10 @@
 
 #include <functional>
 #include <QPainter>
+#include <vector>
+#include "Line.hpp"
 
-using F_t = std::function<double(double, double, double)>;
 using Y_t = std::function<double(double, double)>;
-using Y_xz_t = std::function<int(int, int)>;
 
 
 class FloatingHorizon
@@ -20,13 +20,18 @@ public:
     void setStep(int step);
     int getStep() const;
 
-    void draw(QPainter& painter, Y_xz_t func, int z_front, int z_back);
+    void setSurface(Y_t function);
+    void setViewport(const Vector& start, const Vector& end, size_t xCount = 20, size_t zCount = 20);
+    void rotateView(double angleX, double angleY, double angleZ);
+
+    void draw(QPainter& painter);
 
 protected:
     void resetHorizonts();
-    void drawLine(QPainter& painter, int x1, int y1, int x2, int y2);
+    void drawLine(QPainter& painter, const Line& line);
 
     static void findRoot(double& x_root, double& y_root, double x1, double x2, double y11, double y12, double y21, double y22);
+    static double interp(double x1, double x2, double y1, double y2, double x);
 
     bool hasHorizonIntersection(int i);
 
@@ -34,6 +39,10 @@ private:
     size_t width;
     size_t horizonSize;
     int step = 1;
+
     int* upperHorizon;
     int* lowerHorizon;
+
+    Y_t function = nullptr;
+    std::vector<Line> lines;
 };

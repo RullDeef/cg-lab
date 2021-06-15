@@ -13,8 +13,13 @@ public:
     Canvas();
     virtual ~Canvas() = default;
 
-    virtual void drawSurface(Y_t surface, double startX, double endX, double startY, double endY, double startZ, double endZ);
-    virtual void clear();
+    void setSurface(Y_t function);
+    void setViewport(double startX, double endX, double startY, double endY, double startZ, double endZ);
+    void setCounts(size_t xCount, size_t zCount);
+    void rotateView(double angleX, double angleY, double angleZ);
+
+    void drawSurface();
+    void clear();
 
 protected slots:
     virtual void resizeEvent(QResizeEvent* event) override;
@@ -22,6 +27,9 @@ protected slots:
 
 private:
     QImage renderTarget;
+    
+    Vector start;
+    Vector end;
 
-    FloatingHorizon floatingHorizont;
+    FloatingHorizon floatingHorizon;
 };

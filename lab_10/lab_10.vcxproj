@@ -61,6 +61,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -90,6 +91,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\canvas\floatinghorizon\Line.cpp" />
+    <ClCompile Include="src\Math\Matrix.cpp" />
+    <ClCompile Include="src\Math\Rect.cpp" />
+    <ClCompile Include="src\Math\Transform.cpp" />
+    <ClCompile Include="src\Math\Vector.cpp" />
     <QtRcc Include="forms\mainwindow.qrc" />
     <QtUic Include="forms\mainwindow.ui" />
     <QtMoc Include="src\mainwindow.hpp" />
@@ -103,6 +109,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\canvas\FloatingHorizon\floatinghorizon.hpp" />
+    <ClInclude Include="src\canvas\floatinghorizon\Line.hpp" />
+    <ClInclude Include="src\Math\Matrix.hpp" />
+    <ClInclude Include="src\Math\Rect.hpp" />
+    <ClInclude Include="src\Math\Transform.hpp" />
+    <ClInclude Include="src\Math\Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
