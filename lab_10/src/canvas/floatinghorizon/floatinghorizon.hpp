@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <vector>
 #include "Line.hpp"
+#include "Math/Matrix.hpp"
+#include "viewport.hpp"
 
 using Y_t = std::function<double(double, double)>;
 
@@ -21,12 +23,17 @@ public:
     int getStep() const;
 
     void setSurface(Y_t function);
-    void setViewport(const Vector& start, const Vector& end, size_t xCount = 20, size_t zCount = 20);
+    void setViewport(const Vector& start, const Vector& end, size_t xCount = 20, size_t zCount = 20, size_t nTicks = 1);
     void rotateView(double angleX, double angleY, double angleZ);
+    void rotateView(const Matrix& mat);
+    void resetRotation();
 
     void draw(QPainter& painter);
 
 protected:
+    void updateLines();
+    void normalizeAngles();
+
     void resetHorizonts();
     void drawLine(QPainter& painter, const Line& line);
 
@@ -45,4 +52,10 @@ private:
 
     Y_t function = nullptr;
     std::vector<Line> lines;
+
+    Viewport viewport;
+
+    double angleX = 0.0;
+    double angleY = 0.0;
+    Matrix transformations = Matrix::identity();
 };

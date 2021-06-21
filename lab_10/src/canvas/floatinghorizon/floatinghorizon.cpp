@@ -85,67 +85,45 @@ int FloatingHorizon::getStep() const
 void FloatingHorizon::setSurface(Y_t function)
 {
     this->function = function;
-    lines.clear();
+
+    rotateView(transformations);
 }
 
-void FloatingHorizon::setViewport(const Vector& start, const Vector& end, size_t xCount, size_t zCount)
+void FloatingHorizon::setViewport(const Vector& start, const Vector& end, size_t xCount, size_t zCount, size_t nTicks)
 {
-    if (!function)
-        throw std::runtime_error("function must be set");
+    viewport.xStart = start.getX();
+    viewport.yStart = start.getY();
+    viewport.zStart = start.getZ();
 
-    lines.clear();
-    lines.reserve(2 * xCount * zCount - xCount - zCount);
+    viewport.xEnd = end.getX();
+    viewport.yEnd = end.getY();
+    viewport.zEnd = end.getZ();
 
-    auto dir = end - start;
-    auto delta = end - start;
-    auto center = dir / 2;
-    delta.setX(delta.getX() / (xCount - 1));
-    delta.setZ(delta.getZ() / (zCount - 1));
+    viewport.xCount = xCount;
+    viewport.zCount = zCount;
+    viewport.nTicks = nTicks;
 
-    auto projectorX = [=](double x) {
-        auto f = (x - start.getX()) / dir.getX();
-        return width * (f * SQRT1_2 + 0.5 * (1 - SQRT1_2));
-    };
-    auto projectorZ = [=](double z) {
-        auto f = (z - start.getZ()) / dir.getZ();
-        return width * (f * SQRT1_2 + 0.5 * (1 - SQRT1_2));
-    };
-
-    for (size_t i = 0; i < xCount; i++)
-    {
-        double x = start.getX() + delta.getX() * i;
-        double xp = projectorX(x);
-        for (size_t j = 0; j < zCount; j++)
-        {
-            double z = start.getZ() + delta.getZ() * j;
-            double zp = projectorZ(z);
-            double y = function(x, z);
-
-            if (i < xCount - 1)
-            {
-                double x2 = x + delta.getX();
-                double xp2 = projectorX(x2);
-                double y2 = function(x2, z);
-
-                lines.push_back(Line(Vector(xp, y, zp), Vector(xp2, y2, zp)));
-            }
-            if (j < zCount - 1)
-            {
-                double z2 = z + delta.getZ();
-                double zp2 = projectorZ(z2);
-                double y2 = function(x, z2);
-
-                lines.push_back(Line(Vector(xp, y, zp), Vector(xp, y2, zp2)));
-            }
-        }
-    }
+    if (function)
+        rotateView(transformations);
 }
 
 void FloatingHorizon::rotateView(double angleX, double angleY, double angleZ)
 {
-    auto mat = Matrix::rotation(Vector(1.0, 0.0, 0.0), angleX) *
-        Matrix::rotation(Vector(0.0, 1.0, 0.0), angleY) *
-        Matrix::rotation(Vector(0.0, 0.0, 1.0), angleZ);
+    this->angleX += angleX;
+    this->angleY += angleY;
+
+    normalizeAngles();
+
+    transformations =
+        Matrix::rotation(Vector(0.0, 1.0, 0.0), this->angleY) *
+        Matrix::rotation(Vector(1.0, 0.0, 0.0), this->angleX);
+
+    rotateView(transformations);
+}
+
+void FloatingHorizon::rotateView(const Matrix& mat)
+{
+    updateLines();
 
     double centerY = 0.0;
     for (const auto& line : lines)
@@ -160,22 +138,72 @@ void FloatingHorizon::rotateView(double angleX, double angleY, double angleZ)
 
         if (line.p2.getX() < line.p1.getX())
             std::swap(line.p1, line.p2);
-
-        //double m = (line.p2 - line.p1).getY() / (line.p2 - line.p1).getX();
-        //if (line.p1.getX() < 0)
-        //{
-        //    line.p1.setY(line.p1.getX() * (1 - m));
-        //    line.p1.setX(0);
-        //}
-        //if (line.p2.getX() >= width)
-        //{
-        //    line.p2.setY(line.p1.getX() * (1 + m) + m * (width - 1));
-        //    line.p2.setX(width - 1);
-        //}
     }
 
-    std::sort(lines.begin(), lines.end(),
-        [](const Line& l1, const Line& l2) { return l1.z() < l2.z(); });
+    if (0 <= angleY && angleY < qDegreesToRadians(45))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_j == l2.index_j) return l1.index_i > l2.index_i;
+            return l1.index_j < l2.index_j;
+        });
+    }
+    else if (qDegreesToRadians(45) <= angleY && angleY < qDegreesToRadians(90))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_i == l2.index_i) return l1.index_j > l2.index_j;
+            return l1.index_i > l2.index_i;
+        });
+    }
+    else if (qDegreesToRadians(90) <= angleY && angleY < qDegreesToRadians(135))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_i == l2.index_i) return l1.index_j < l2.index_j;
+            return l1.index_i > l2.index_i;
+        });
+    }
+    else if (qDegreesToRadians(135) <= angleY && angleY < qDegreesToRadians(180))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_j == l2.index_j) return l1.index_i < l2.index_i;
+            return l1.index_j > l2.index_j;
+        });
+    }
+    else if (qDegreesToRadians(180) <= angleY && angleY < qDegreesToRadians(225))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_j == l2.index_j) return l1.index_i > l2.index_i;
+            return l1.index_j > l2.index_j;
+        });
+    }
+    else if (qDegreesToRadians(225) <= angleY && angleY < qDegreesToRadians(270))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_j == l2.index_j) return l1.index_i < l2.index_i;
+            return l1.index_j > l2.index_j;
+        });
+    }
+    else if (qDegreesToRadians(270) <= angleY && angleY < qDegreesToRadians(315))
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_i == l2.index_i) return l1.index_j > l2.index_j;
+            return l1.index_i < l2.index_i;
+        });
+    }
+    else
+    {
+        std::sort(lines.begin(), lines.end(), [](const Line& l1, const Line& l2) {
+            if (l1.index_j == l2.index_j) return l1.index_i < l2.index_i;
+            return l1.index_j < l2.index_j;
+        });
+    }
+}
+
+void FloatingHorizon::resetRotation()
+{
+    transformations = Matrix::identity();
+    angleX = 0.0;
+    angleY = 0.0;
+    rotateView(transformations);
 }
 
 void FloatingHorizon::draw(QPainter& painter)
@@ -185,67 +213,93 @@ void FloatingHorizon::draw(QPainter& painter)
         drawLine(painter, line);
 }
 
-/*
-void draw(QPainter& painter, Y_xz_t func, int z_front, int z_back)
+void FloatingHorizon::updateLines()
 {
-    resetHorizonts();
+    lines.clear();
+    lines.reserve(viewport.nTicks * (2 * viewport.xCount * viewport.zCount - viewport.xCount - viewport.zCount));
 
-    if (z_front < z_back)
-        std::swap(z_front, z_back);
+    Vector start(viewport.xStart, viewport.yStart, viewport.zStart);
+    Vector end(viewport.xEnd, viewport.yEnd, viewport.zEnd);
 
-    for (int z = z_front; z > z_back; z--)
+    auto dir = end - start;
+    auto delta = end - start;
+    auto center = dir / 2;
+    delta.setX(delta.getX() / (viewport.xCount - 1));
+    delta.setZ(delta.getZ() / (viewport.zCount - 1));
+
+    auto projectorX = [=](double x) {
+        auto f = (x - viewport.xStart) / dir.getX();
+        return width * (f * SQRT1_2 + 0.5 * (1 - SQRT1_2));
+    };
+    auto projectorZ = [=](double z) {
+        auto f = (z - start.getZ()) / dir.getZ();
+        return width * (f * SQRT1_2 + 0.5 * (1 - SQRT1_2));
+    };
+
+    const size_t N = viewport.nTicks + 1;
+
+    for (size_t i = 0; i < viewport.xCount; i++)
     {
-        int x_prev = 0;
-        int y_prev = func(x_prev, z);
-        bool y_prev_upper = y_prev < upperHorizon[0];
-        bool y_prev_lower = y_prev > lowerHorizon[0];
-        bool y_prev_visible = y_prev_upper || y_prev_lower;
-
-        for (int i = 1, x = step; i < horizonSize; i++, x += step)
+        double x = viewport.xStart + delta.getX() * i;
+        double xp = projectorX(x);
+        for (size_t j = 0; j < viewport.zCount; j++)
         {
-            int y = func(x, z);
-            bool y_upper = y < upperHorizon[i];
-            bool y_lower = y > lowerHorizon[i];
-            bool y_visible = y_upper || y_lower;
+            double z = viewport.zStart + delta.getZ() * j;
+            double zp = projectorZ(z);
+            double y = function(x, z);
 
-            if ((y_prev_visible && y_visible) || z > z_front - 2)
+            if (i < viewport.xCount - 1)
             {
-                painter.drawLine(x_prev, y_prev, x, y);
+                double x1 = x;
+                double xp1 = xp;
+                double y1 = y;
+
+                for (size_t k = 1; k <= viewport.nTicks; k++)
+                {
+                    double x2 = x + delta.getX() * k / viewport.nTicks;
+                    double xp2 = projectorX(x2);
+                    double y2 = function(x2, z);
+
+                    lines.push_back(Line(Vector(xp1, y1, zp), Vector(xp2, y2, zp), i * N + k, j * N));
+
+                    x1 = x2;
+                    xp1 = xp2;
+                    y1 = y2;
+                }
             }
-            else if ((y_prev_visible ^ y_visible) && step > 2 && !hasHorizonIntersection(i))
+            if (j < viewport.zCount - 1)
             {
-                int* horizon = (y_prev_upper || y_upper) ? upperHorizon : lowerHorizon;
+                double z1 = z;
+                double zp1 = zp;
+                double y1 = y;
 
-                double x_root, y_root;
-                findRoot(x_root, y_root, x_prev, x, y_prev, y, horizon[i - 1], horizon[i]);
+                for (size_t k = 1; k <= viewport.nTicks; k++)
+                {
+                    double z2 = z + delta.getZ() * k / viewport.nTicks;
+                    double zp2 = projectorZ(z2);
+                    double y2 = function(x, z2);
 
-                if (y_prev_visible)
-                    painter.drawLine(x_prev, y_prev, x_root, y_root);
-                else
-                    painter.drawLine(x_root, y_root, x, y);
+                    lines.push_back(Line(Vector(xp, y1, zp1), Vector(xp, y2, zp2), i * N, j * N + k));
+
+                    z1 = z2;
+                    zp1 = zp2;
+                    y1 = y2;
+                }
             }
-
-            if (y_prev_upper)
-                upperHorizon[i - 1] = y_prev;
-
-            if (y_prev_lower)
-                lowerHorizon[i - 1] = y_prev;
-
-            x_prev = x;
-            y_prev = y;
-            y_prev_upper = y_upper;
-            y_prev_lower = y_lower;
-            y_prev_visible = y_visible;
         }
-
-        if (y_prev_upper)
-            upperHorizon[horizonSize - 1] = y_prev;
-
-        if (y_prev_lower)
-            lowerHorizon[horizonSize - 1] = y_prev;
     }
 }
-*/
+
+void FloatingHorizon::normalizeAngles()
+{
+    constexpr auto two_pi = qDegreesToRadians(360);
+
+    while (angleX < 0.0) angleX += two_pi;
+    while (angleX >= two_pi) angleX -= two_pi;
+
+    while (angleY < 0.0) angleY += two_pi;
+    while (angleY >= two_pi) angleY -= two_pi;
+}
 
 void FloatingHorizon::resetHorizonts()
 {
@@ -253,108 +307,79 @@ void FloatingHorizon::resetHorizonts()
     std::memset(lowerHorizon, 0, horizonSize * sizeof(int));
 }
 
-#define TEST_DBG { if (i1 >= width || i2 >= width) __debugbreak(); }
-
 void FloatingHorizon::drawLine(QPainter& painter, const Line& line)
 {
-    if ((line.p2 - line.p1).getX() < step)
-    {
-        painter.setPen(Qt::red);
-        painter.drawLine(line.p1.getX(), line.p1.getY(), line.p2.getX(), line.p2.getY());
-        return;
-    }
+    double deltaX = line.p2.getX() - line.p1.getX();
 
-    auto delta = (line.p2 - line.p1) / (line.p2 - line.p1).getX() * step;
-
-    for (Vector p = line.p1; p.getX() < line.p2.getX(); p = p + delta)
+    if (deltaX <= step)
     {
-        long i = p.getX() / step;
+        long i = line.p1.getX() / step;
 
         if (i >= 0 && i < width)
         {
-            bool visible = false;
-            if (p.getY() < upperHorizon[i])
-            {
-                upperHorizon[i] = p.getY();
-                visible = true;
-            }
-            if (p.getY() > lowerHorizon[i])
-            {
-                lowerHorizon[i] = p.getY();
-                visible = true;
-            }
+            Line temp = line;
+            if (temp.p2.getY() < temp.p1.getY())
+                std::swap(temp.p1, temp.p2);
 
-            if (visible)
+            double y_min = temp.p1.getY(), y_max = temp.p2.getY();
+            double y_up = upperHorizon[i], y_bel = lowerHorizon[i];
+
+            if (y_max <= y_up || y_bel <= y_min)
+                painter.drawLine(temp.p1.getX(), y_min, temp.p2.getX(), y_max);
+            else
             {
-                painter.setPen(Qt::black);
-                painter.drawLine(p.getX(), p.getY(), (p + delta).getX(), (p + delta).getY());
+                if (y_min < y_up)
+                    painter.drawLine(temp.p1.getX(), temp.p1.getY(), temp.p2.getX(), y_up);
+
+                if (y_bel < y_max)
+                    painter.drawLine(temp.p1.getX(), y_bel, temp.p2.getX(), temp.p2.getY());
             }
         }
+        return;
     }
 
-    // painter.drawLine(line.p1.getX(), line.p1.getY(), line.p2.getX(), line.p2.getY());
-}
+    double deltaY = line.p2.getY() - line.p1.getY();
+    double m = deltaY / deltaX;
 
-/*
-void FloatingHorizon::drawLine(QPainter& painter, const Line& line)
-{
-    size_t i1 = line.p1.getX() / step;
-    size_t i2 = i1 + 1;
+    double xPrev = line.p1.getX();
+    double yPrev = line.p1.getY();
 
-    Vector delta = line.p2 - line.p1;
-    double dy = delta.getY() / delta.getX() * step;
+    long i = static_cast<long>(xPrev / step);
+    bool prevUpper = (xPrev < 0.0 || xPrev >= width * step) ? false : yPrev <= upperHorizon[i];
+    bool prevLower = (xPrev < 0.0 || xPrev >= width * step) ? false : yPrev >= lowerHorizon[i];
 
-    double x1 = line.p1.getX();
-    double y1 = line.p1.getY();
-    double x2 = x1 + step;
-    double y2 = y1 + dy;
-
-    TEST_DBG;
-    bool prev_upper = y1 < upperHorizon[i1];
-    bool prev_lower = y1 > lowerHorizon[i1];
-
-    for (; x2 < line.p2.getX(); i1++, i2++)
+    for (double x = line.p1.getX() + step; x < line.p2.getX() + step; x += step)
     {
-        TEST_DBG;
-        bool upper = y2 < upperHorizon[i2];
-        bool lower = y2 > lowerHorizon[i2];
+        double y = m * (x - line.p1.getX()) + line.p1.getY();
+        i = x / step;
 
-        if ((prev_upper && prev_lower) && (upper && lower))
+        if (i >= 0 && i < width)
         {
-            painter.setPen(Qt::black);
-            painter.drawLine(x1, y1, x2, y2);
+            bool upper = y <= upperHorizon[i];
+            bool lower = y >= lowerHorizon[i];
+
+            if (upper) upperHorizon[i] = y;
+            if (lower) lowerHorizon[i] = y;
+
+            if ((prevUpper || prevLower) && (upper || lower))
+            {
+                // painter.setPen(Qt::black);
+                painter.drawLine(xPrev, yPrev, x, y);
+            }
+
+            prevUpper = upper;
+            prevLower = lower;
         }
         else
         {
-            painter.setPen(Qt::green);
-            painter.drawLine(x1, y1, x2, y2);
+            prevUpper = false;
+            prevLower = false;
         }
 
-        if (prev_upper)
-            upperHorizon[i1] = y1;
-
-        if (prev_lower)
-            lowerHorizon[i1] = y1;
-
-        prev_lower = lower;
-        prev_upper = upper;
-
-        x1 = x2;
-        y1 = y2;
-        x2 += step;
-        y2 += dy;
+        xPrev = x;
+        yPrev = y;
     }
-
-    TEST_DBG;
-    if (prev_upper)
-        upperHorizon[i1] = y1;
-
-    if (prev_lower)
-        lowerHorizon[i1] = y1;
-
-    //painter.drawLine(line.p1.getX(), line.p1.getY(), line.p2.getX(), line.p2.getY());
 }
-*/
 
 void FloatingHorizon::findRoot(double& x_root, double& y_root, double x1, double x2, double y11, double y12, double y21, double y22)
 {

@@ -6,9 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>735</width>
+    <width>633</width>
     <height>598</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -65,7 +70,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -119,7 +124,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_4">
+           <widget class="QGroupBox" name="viewportSelector">
             <property name="title">
              <string>Границы отображения поверхности</string>
             </property>
@@ -142,54 +147,31 @@
              <property name="bottomMargin">
               <number>4</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Xнач</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QDoubleSpinBox" name="xStart"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>Xкон</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QDoubleSpinBox" name="xEnd"/>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_4">
-               <property name="text">
-                <string>Zнач</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QDoubleSpinBox" name="zStart"/>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string>Zкон</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QDoubleSpinBox" name="zEnd"/>
-             </item>
             </layout>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="resetRotation">
-            <property name="text">
-             <string>Сбросить поворот</string>
+           <widget class="QGroupBox" name="orientationSelector">
+            <property name="title">
+             <string>Поворот</string>
             </property>
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="topMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>4</number>
+             </property>
+             <property name="spacing">
+              <number>4</number>
+             </property>
+            </layout>
            </widget>
           </item>
           <item>
@@ -205,28 +187,7 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QCheckBox" name="showAxes">
-            <property name="text">
-             <string>Показывать координатные оси</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="autoRotate">
-            <property name="text">
-             <string>Автоматическое вращение</string>
-            </property>
-           </widget>
-          </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Панель состояния</string>
-         </property>
         </widget>
        </item>
       </layout>

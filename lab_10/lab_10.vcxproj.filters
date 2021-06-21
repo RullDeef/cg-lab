@@ -50,6 +50,15 @@
     <ClCompile Include="src\canvas\floatinghorizon\Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\functionselector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viewportselector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\orientationselector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\mainwindow.hpp">
@@ -58,9 +67,24 @@
     <QtMoc Include="src\canvas\canvas.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="src\functionselector.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\viewportselector.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\orientationselector.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="forms\mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\viewportselector.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\orientationselector.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -86,6 +110,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\canvas\floatinghorizon\Line.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\canvas\floatinghorizon\viewport.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

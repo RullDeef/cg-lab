@@ -15,8 +15,9 @@ public:
 
     void setSurface(Y_t function);
     void setViewport(double startX, double endX, double startY, double endY, double startZ, double endZ);
-    void setCounts(size_t xCount, size_t zCount);
+    void setCounts(size_t xCount, size_t zCount, size_t nTicks);
     void rotateView(double angleX, double angleY, double angleZ);
+    void resetRotation();
 
     void drawSurface();
     void clear();
@@ -28,8 +29,8 @@ protected slots:
 private:
     QImage renderTarget;
     
-    Vector start;
-    Vector end;
+    Vector start = Vector(0.0, -1.0, 0.0);
+    Vector end = Vector(0.0, 1.0, 0.0);
 
     FloatingHorizon floatingHorizon;
 };
