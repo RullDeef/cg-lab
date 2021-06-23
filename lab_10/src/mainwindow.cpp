@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
             }
         },
         {
-            "pic1 + pic2 - 0.5 + 0.3 * z", [](double x, double z)
+            "pic(0.2, 0.1) + pic(0.4, 0.1)", [](double x, double z)
             {
                 double pic1 = 0.6 / (1 + 60 * (x - 0.2) * (x - 0.2) + 20 * (z - 0.1) * (z - 0.1));
                 double pic2 = 0.6 / (1 + 80 * (x + 0.4) * (x + 0.4) + 20 * (z + 0.1) * (z + 0.1));
@@ -33,6 +33,18 @@ MainWindow::MainWindow(QWidget *parent)
             "sin(hypot(x, z))", [](double x, double z)
             {
                 return 0.2 * std::sin(10 * std::hypot(x, z));
+            }
+        },
+        {
+            "cos(3 * x + 2 * z)", [](double x, double z)
+            {
+                return 0.2 * std::cos(3 * x + 2 * z);
+            }
+        },
+        {
+            "cos(x * sin(2 * z))", [](double x, double z)
+            {
+                return 0.3 * std::cos(x * std::sin(2 * z));
             }
         }
     });

@@ -15,7 +15,7 @@ void Canvas::setSurface(Y_t function)
 {
     floatingHorizon.setSurface([=](double x, double z) {
         double yf = function(x, z);
-        return (yf - start.getY()) / (end.getY() - start.getY()) * height();
+        return (end.getY() - yf) / (end.getY() - start.getY()) * height();
     });
 }
 
