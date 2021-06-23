@@ -2,6 +2,7 @@
 #include "rectcuttercanvas.hpp"
 #include "cutterconstrainter.hpp"
 #include <QMouseEvent>
+#include <QApplication>
 
 
 ui::RectCutterCanvas::RectCutterCanvas()
@@ -12,8 +13,7 @@ ui::RectCutterCanvas::RectCutterCanvas()
 void ui::RectCutterCanvas::applyCut()
 {
     regionCutted = region.clone();
-    core::WeilerAtherton weilerAthertonCutter;
-    weilerAthertonCutter.cut(regionCutted, cutter);
+    core::WeilerAtherton().cut(regionCutted, cutter);
     repaint();
 }
 
@@ -98,6 +98,8 @@ void ui::RectCutterCanvas::mousePressEvent(QMouseEvent* event)
 
 void ui::RectCutterCanvas::mouseReleaseEvent(QMouseEvent* event)
 {
+    regionBuilder.setConstraintFlag(false);
+    cutterBuilder.setConstraintFlag(false);
 }
 
 void ui::RectCutterCanvas::mouseMoveEvent(QMouseEvent* event)
@@ -106,11 +108,13 @@ void ui::RectCutterCanvas::mouseMoveEvent(QMouseEvent* event)
 
     if (selectingCutter)
     {
+        cutterBuilder.setConstraintFlag(QApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier));
         cutterBuilder.updateLastPoint(mousePos.x(), mousePos.y());
         cutter = cutterBuilder.getResult();
     }
     else if (selectingContour)
     {
+        regionBuilder.setConstraintFlag(QApplication::keyboardModifiers().testFlag(Qt::KeyboardModifier::ShiftModifier));
         regionBuilder.updateLastPoint(mousePos.x(), mousePos.y());
         region = regionBuilder.getResult();
     }

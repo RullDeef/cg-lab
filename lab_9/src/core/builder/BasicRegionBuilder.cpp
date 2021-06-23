@@ -10,6 +10,8 @@ BasicRegionBuilder::BasicRegionBuilder(double mergeDistance)
 
 void core::BasicRegionBuilder::updateLastPoint(int x, int y)
 {
+    applyConstraint(x, y);
+
     if (contour.size() == 0)
     {
         tempPoint.x = x;
@@ -52,6 +54,11 @@ void core::BasicRegionBuilder::confirmLastPoint()
     }
 }
 
+void core::BasicRegionBuilder::setConstraintFlag(bool flag)
+{
+    constrainting = flag;
+}
+
 void core::BasicRegionBuilder::reset()
 {
     points.clear();
@@ -89,4 +96,19 @@ BasicRegion BasicRegionBuilder::getResult()
     }
 
     return region;
+}
+
+void core::BasicRegionBuilder::applyConstraint(int& x, int& y)
+{
+    if (points.size() > 1 && constrainting)
+    {
+        Point prev = *++points.rbegin();
+        int dx = std::abs(x - prev.x);
+        int dy = std::abs(y - prev.y);
+
+        if (dx <= dy)
+            x = prev.x;
+        else
+            y = prev.y;
+    }
 }
